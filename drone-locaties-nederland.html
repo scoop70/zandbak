@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Top 20 drone-locaties in Nederland</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+html,body,#map{height:100%;margin:0;font-family:system-ui,sans-serif}
+.pop h3{margin:0 0 4px;font-size:15px}
+.pop p{margin:4px 0;font-size:13px}
+.pop .rt{background:#eef6ff;border-radius:6px;padding:6px 8px;margin-top:6px}
+.pop a{color:#0b5cad;font-weight:600}
+.num{background:#d9480f;color:#fff;border:2px solid #fff;border-radius:50%;width:26px;height:26px;line-height:22px;text-align:center;font-weight:700;font-size:12px;box-shadow:0 1px 4px #0006}
+.start{background:#2b8a3e}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// Startpunt: Lelystad (pas aan indien gewenst)
+const START = {name:"Lelystad", lat:52.5085, lon:5.4750};
+
+// km en min = schatting over de weg vanaf het startpunt; wordt live vervangen door OSRM als internet beschikbaar is
+const L20 = [
+{n:"Kinderdijk",lat:51.8836,lon:4.6406,km:120,min:80,t:"Iconische molens, vroeg ochtendlicht en mist.",w:"UNESCO-erfgoed: vooraf drone-regels checken."},
+{n:"Zaanse Schans",lat:52.4750,lon:4.8180,km:70,min:55,t:"Groene houten huizen en molens aan de Zaan.",w:"Drukbezocht, houd afstand van mensen."},
+{n:"Giethoorn",lat:52.7389,lon:6.0786,km:85,min:65,t:"Dorp zonder straten, rietgedekte boerderijen en grachten.",w:"Bewoond gebied: privacy respecteren."},
+{n:"Posbank (Veluwezoom)",lat:52.0120,lon:6.0200,km:100,min:70,t:"Heide in bloei (aug-sep) met heuvels.",w:"Natura 2000: vliegverbod/beperkingen mogelijk."},
+{n:"Kootwijkerzand",lat:52.1860,lon:5.7940,km:65,min:50,t:"Grootste stuifzandgebied van West-Europa.",w:"Natura 2000: regels controleren."},
+{n:"Oosterscheldekering",lat:51.6280,lon:3.7000,km:190,min:130,t:"Stormvloedkering over de Oosterschelde, mooi bij zonsondergang.",w:"Wind kan hier sterk zijn."},
+{n:"Texel – De Slufter",lat:53.1000,lon:4.8900,km:135,min:105,t:"Kwelder, duinen en strand. Rijtijd excl. veerboot Den Helder-Texel.",w:"Waddengebied: beschermd natuurgebied."},
+{n:"Afsluitdijk",lat:53.0000,lon:5.1900,km:100,min:70,t:"30 km lange dijk tussen IJsselmeer en Waddenzee.",w:"Veel wind en verkeer; veilig opstijgpunt kiezen."},
+{n:"Schokland",lat:52.6370,lon:5.7750,km:35,min:30,t:"Voormalig eiland, UNESCO-werelderfgoed in de Noordoostpolder.",w:"Beschermd erfgoedgebied."},
+{n:"Loonse en Drunense Duinen",lat:51.6800,lon:5.0800,km:125,min:85,t:"Zandverstuivingen en bos in Brabant.",w:"Natura 2000: regels controleren."},
+{n:"Hoge Veluwe",lat:52.0950,lon:5.8400,km:75,min:55,t:"Heide, zandverstuiving en bossen.",w:"Nationaal park: toestemming vaak nodig."},
+{n:"Biesbosch",lat:51.7500,lon:4.7700,km:140,min:95,t:"Getijdenlandschap met kreken en wilgenbossen.",w:"Natuurbeschermingsgebied."},
+{n:"Lauwersmeer",lat:53.3700,lon:6.2000,km:150,min:100,t:"Weidse leegte en vogeltrek; Dark Sky-gebied.",w:"Vogelbroedgebied: seizoensbeperkingen."},
+{n:"Kennemerduinen",lat:52.4500,lon:4.5800,km:85,min:60,t:"Duinen bij Zandvoort en Bloemendaal.",w:"Nationaal park: regels controleren."},
+{n:"Bollenstreek / Keukenhof",lat:52.2690,lon:4.5460,km:90,min:65,t:"Kleurrijke tulpenvelden in het voorjaar.",w:"Vlieg niet boven privé-percelen zonder toestemming."},
+{n:"Drents-Friese Wold",lat:52.9400,lon:6.3500,km:100,min:70,t:"Heide, bos en stuifzand rond Diever.",w:"Natura 2000: regels controleren."},
+{n:"Sallandse Heuvelrug",lat:52.3600,lon:6.4500,km:80,min:55,t:"Heuvelachtige heide bij Holten.",w:"Natuurgebied met beperkingen."},
+{n:"Drielandenpunt (Vaals)",lat:50.7545,lon:5.6980,km:230,min:150,t:"Hoogste punt van Nederland, uitzicht over Heuvelland.",w:"Toeristisch drukke plek."},
+{n:"Rotterdam – Kop van Zuid",lat:51.9090,lon:4.4870,km:110,min:75,t:"Skyline met Erasmusbrug en De Rotterdam.",w:"Stad: vaak vliegverbod/CTR-zones, controleer eerst."},
+{n:"Marker Wadden",lat:52.5900,lon:5.3900,km:20,min:20,t:"Kunstmatig eiland in het Markermeer. Rijtijd naar Bataviahaven; verder per boot.",w:"Natuurgebied, toegang en drone-gebruik beperkt."}
+];
+
+const map = L.map('map').setView([52.3,5.4],8);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+
+const fmt = (km,min)=>`${Math.round(km)} km &middot; ${Math.floor(min/60)?Math.floor(min/60)+' u ':''}${Math.round(min%60)} min`;
+
+L.marker([START.lat,START.lon],{icon:L.divIcon({className:'',html:'<div class="num start">S</div>',iconSize:[26,26]})})
+ .addTo(map).bindPopup(`<b>Startpunt: ${START.name}</b>`);
+
+const group = L.featureGroup().addTo(map);
+let routeLine = null;
+
+L20.forEach((p,i)=>{
+  const gm = `https://www.google.com/maps/dir/?api=1&origin=${START.lat},${START.lon}&destination=${p.lat},${p.lon}&travelmode=driving`;
+  const html = `<div class="pop"><h3>${i+1}. ${p.n}</h3><p>${p.t}</p>
+  <p><i>Let op: ${p.w}</i></p>
+  <div class="rt">🚗 Route vanaf ${START.name}:<br><b class="rtv">ca. ${fmt(p.km,p.min)}</b> <small class="src">(schatting)</small></div>
+  <p><a href="${gm}" target="_blank" rel="noopener">Open route in Google Maps</a></p></div>`;
+  const m = L.marker([p.lat,p.lon],{icon:L.divIcon({className:'',html:`<div class="num">${i+1}</div>`,iconSize:[26,26]})}).addTo(group).bindPopup(html,{maxWidth:280});
+  m.on('popupopen',async e=>{
+    const el = e.popup.getElement();
+    try{
+      const r = await fetch(`https://router.project-osrm.org/route/v1/driving/${START.lon},${START.lat};${p.lon},${p.lat}?overview=full&geometries=geojson`);
+      const d = (await r.json()).routes[0];
+      el.querySelector('.rtv').innerHTML = fmt(d.distance/1000,d.duration/60);
+      el.querySelector('.src').textContent='(live berekend)';
+      if(routeLine) map.removeLayer(routeLine);
+      routeLine = L.geoJSON(d.geometry,{style:{color:'#1971c2',weight:4,opacity:.8}}).addTo(map);
+    }catch(err){ /* offline: schatting blijft staan */ }
+  });
+});
+map.on('popupclose',()=>{ if(routeLine){map.removeLayer(routeLine);routeLine=null;} });
+map.fitBounds(group.getBounds().pad(0.1));
+</script>
+</body>
+</html>
