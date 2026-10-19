@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terracottaleger – Qin Shi Huangdi</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<style>
+:root{
+  --ink:#1c2227; --stone:#e8ebed; --line:#c5cbd0; --ochre:#b7791f;
+  --lacquer:#8c2f39; --hg:#3f6aa8; --muted:#5b666e;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{display:flex;font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:var(--stone)}
+aside{width:340px;max-width:100%;padding:20px 20px 16px;overflow-y:auto;border-right:1px solid var(--line);background:var(--stone)}
+h1{font:600 24px/1.2 Iowan Old Style,Georgia,serif;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 18px}
+h2{font:600 14px/1.3 system-ui,sans-serif;margin:20px 0 8px}
+label.row{display:flex;gap:10px;align-items:center;padding:6px 0;cursor:pointer}
+.sw{width:14px;height:14px;border-radius:3px;flex:none;border:2px solid}
+select,input[type=range]{width:100%}
+select{padding:6px;border:1px solid var(--line);border-radius:4px;background:#fff;font:inherit}
+.info{background:#fff;border:1px solid var(--line);border-radius:6px;padding:12px 14px;min-height:120px}
+.info b{display:block;font-size:16px;margin-bottom:4px}
+.info dl{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:2px 12px}
+.info dt{color:var(--muted)} .info dd{margin:0}
+.note{font-size:13px;color:var(--muted);margin-top:18px}
+#map{flex:1;min-width:0}
+.leaflet-container{font:inherit}
+.legend{background:#fff;padding:8px 10px;border-radius:4px;border:1px solid var(--line);font-size:12px;line-height:1.4}
+.legend .bar{height:8px;width:140px;border-radius:2px;margin:4px 0 2px;background:linear-gradient(90deg,#dfe8f5,#8fb0dc,#3f6aa8,#1d2f66)}
+.legend .scale{display:flex;justify-content:space-between;color:var(--muted)}
+:focus-visible{outline:2px solid var(--hg);outline-offset:2px}
+@media (max-width:760px){
+  body{flex-direction:column-reverse}
+  aside{width:100%;height:46%;border-right:0;border-top:1px solid var(--line)}
+  #map{height:54%;flex:none}
+}
+</style>
+</head>
+<body>
+<aside>
+  <h1>Terracottaleger</h1>
+  <p class="sub">Grafcomplex van Qin Shi Huangdi, Lintong (Xi’an)</p>
+
+  <h2>Achtergrond</h2>
+  <select id="base" aria-label="Achtergrondkaart">
+    <option value="sat">Luchtfoto (Esri)</option>
+    <option value="osm">OpenStreetMap</option>
+  </select>
+
+  <h2>Lagen</h2>
+  <label class="row"><input type="checkbox" id="l-pits" checked><span class="sw" style="border-color:var(--ochre);background:#b7791f55"></span>Kuilen 1 t/m 4</label>
+  <label class="row"><input type="checkbox" id="l-tomb" checked><span class="sw" style="border-color:var(--lacquer);background:#8c2f3955"></span>Grafheuvel</label>
+  <label class="row"><input type="checkbox" id="l-walls" checked><span class="sw" style="border-color:#fff;background:#0000;border-style:dashed"></span>Binnen- en buitenmuur</label>
+  <label class="row"><input type="checkbox" id="l-hg" checked><span class="sw" style="border-color:var(--hg);background:#3f6aa855"></span>Kwik-anomalie (voorbeelddata)</label>
+
+  <h2>Intensiteit kwik-laag</h2>
+  <input type="range" id="hg-int" min="0.2" max="1" step="0.05" value="0.7" aria-label="Intensiteit kwik-laag">
+
+  <h2>Geselecteerd</h2>
+  <div class="info" id="info"><span style="color:var(--muted)">Klik op een kuil, de grafheuvel of een muur voor details.</span></div>
+
+  <p class="note">
+    Posities en afmetingen zijn indicatief en opgebouwd uit gepubliceerde maten, niet uit opmeting. De kwik-laag is <b>synthetische voorbeelddata</b> om de werkwijze te tonen. Vervang <code>PITS</code>, <code>WALLS</code> en <code>HG_POINTS</code> in de code door je eigen gedigitaliseerde data.
+  </p>
+</aside>
+<div id="map"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
+<script>
+/* ---------- Hulpfunctie: rechthoek uit middelpunt en afmetingen in meters ---------- */
+function rect(lat, lon, wE, hN){
+  const dLat = hN/2/111320, dLon = wE/2/(111320*Math.cos(lat*Math.PI/180));
+  return [[lat-dLat,lon-dLon],[lat-dLat,lon+dLon],[lat+dLat,lon+dLon],[lat+dLat,lon-dLon]];
+}
+
+/* ---------- Data (vervang door eigen digitalisering) ---------- */
+const PITS = [
+  {naam:"Kuil 1", lat:34.3843, lon:109.2740, w:230, h:62, wat:"Hoofdleger: voetsoldaten, strijdwagens en paarden", soldaten:"ca. 6.000", ontdekt:1974, status:"Deels opgegraven"},
+  {naam:"Kuil 2", lat:34.3869, lon:109.2778, w:96,  h:84, wat:"Gemengde formatie: cavalerie, boogschutters, strijdwagens", soldaten:"ca. 1.400", ontdekt:1976, status:"Deels opgegraven"},
+  {naam:"Kuil 3", lat:34.3869, lon:109.2722, w:28,  h:25, wat:"Commandopost met officieren en strijdwagen", soldaten:"ca. 70", ontdekt:1976, status:"Opgegraven"},
+  {naam:"Kuil 4", lat:34.3856, lon:109.2762, w:60,  h:40, wat:"Onvoltooid, geen beelden gevonden", soldaten:"0", ontdekt:1976, status:"Leeg"}
+].map(p => ({...p, opp: Math.round(p.w*p.h), coords: rect(p.lat,p.lon,p.w,p.h)}));
+
+const TOMB = {lat:34.3812, lon:109.2536, naam:"Grafheuvel", straal:175};
+const WALLS = [
+  {naam:"Binnenmuur",  coords: rect(34.3835,109.2540,580,1355), lengte:"ca. 1.355 × 580 m"},
+  {naam:"Buitenmuur",  coords: rect(34.3840,109.2540,940,2165), lengte:"ca. 2.165 × 940 m"}
+];
+
+/* Synthetische kwik-metingen: gaussische wolk rond de grafheuvel, vast zaadje zodat het resultaat reproduceerbaar is */
+let seed = 42; const rnd = () => (seed = (seed*16807) % 2147483647) / 2147483647;
+const gauss = () => Math.sqrt(-2*Math.log(rnd()+1e-9))*Math.cos(2*Math.PI*rnd());
+const HG_POINTS = Array.from({length:700}, () => {
+  const dx = gauss()*85, dy = gauss()*85;
+  const lat = TOMB.lat + dy/111320 + 0.0002;
+  const lon = TOMB.lon + dx/(111320*Math.cos(TOMB.lat*Math.PI/180));
+  const d = Math.hypot(dx,dy);
+  return [lat, lon, Math.exp(-(d*d)/(2*110*110))];
+});
+
+/* ---------- Kaart ---------- */
+const map = L.map('map', {zoomControl:true}).setView([34.3835,109.2640], 14);
+const base = {
+  sat: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {maxZoom:19, attribution:'Tiles © Esri, Maxar, Earthstar Geographics'}),
+  osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {maxZoom:19, attribution:'© OpenStreetMap-bijdragers'})
+};
+let current = base.sat.addTo(map);
+document.getElementById('base').onchange = e => {
+  map.removeLayer(current); current = base[e.target.value].addTo(map); current.bringToBack();
+};
+
+const info = document.getElementById('info');
+const show = (titel, rows) => info.innerHTML = `<b>${titel}</b><dl>` +
+  rows.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('') + '</dl>';
+
+/* Kuilen */
+const pitLayer = L.layerGroup();
+PITS.forEach(p => {
+  const poly = L.polygon(p.coords, {color:'#b7791f', weight:2, fillColor:'#e0a43a', fillOpacity:0.45}).addTo(pitLayer);
+  poly.bindTooltip(p.naam, {permanent:true, direction:'center', className:''});
+  poly.on('click', () => show(p.naam, [
+    ["Inhoud", p.wat], ["Soldaten", p.soldaten], ["Oppervlak", p.opp.toLocaleString('nl-NL') + " m² (indicatief)"],
+    ["Ontdekt", p.ontdekt], ["Status", p.status]
+  ]));
+});
+
+/* Grafheuvel */
+const tombLayer = L.layerGroup();
+L.circle([TOMB.lat,TOMB.lon], {radius:TOMB.straal, color:'#8c2f39', weight:2, fillColor:'#8c2f39', fillOpacity:0.3})
+  .addTo(tombLayer)
+  .on('click', () => show(TOMB.naam, [
+    ["Betekenis","Graf van keizer Qin Shi Huangdi"],
+    ["Doorsnede","ca. 350 m (basis, indicatief)"],
+    ["Status","Grafkamer niet geopend"],
+    ["Bodemonderzoek","Verhoogde kwikwaarden gemeten"]
+  ]));
+
+/* Muren */
+const wallLayer = L.layerGroup();
+WALLS.forEach(w => L.polygon(w.coords, {color:'#ffffff', weight:2, dashArray:'6 6', fill:false}).addTo(wallLayer)
+  .on('click', () => show(w.naam, [["Afmeting", w.lengte], ["Type","Omheining van het grafcomplex"]])));
+
+/* Kwik-heatmap */
+let hgOpacity = 0.7;
+const hgLayer = L.heatLayer(HG_POINTS, {
+  radius:28, blur:24, maxZoom:17, max:1,
+  gradient:{0.2:'#dfe8f5', 0.45:'#8fb0dc', 0.7:'#3f6aa8', 1:'#1d2f66'}
+});
+document.getElementById('hg-int').oninput = e => {
+  hgOpacity = +e.target.value;
+  const c = hgLayer._canvas; if (c) c.style.opacity = hgOpacity;
+};
+
+/* Layer toggles */
+const toggles = {'l-pits':pitLayer,'l-tomb':tombLayer,'l-walls':wallLayer,'l-hg':hgLayer};
+Object.entries(toggles).forEach(([id, layer]) => {
+  const cb = document.getElementById(id);
+  const apply = () => { cb.checked ? layer.addTo(map) : map.removeLayer(layer);
+    if (layer === hgLayer && hgLayer._canvas) hgLayer._canvas.style.opacity = hgOpacity; };
+  cb.onchange = apply; apply();
+});
+
+/* Legenda kwik */
+const legend = L.control({position:'bottomright'});
+legend.onAdd = () => { const d = L.DomUtil.create('div','legend');
+  d.innerHTML = '<b>Kwik (relatief)</b><div class="bar"></div><div class="scale"><span>laag</span><span>hoog</span></div>'; return d; };
+legend.addTo(map);
+
+L.control.scale({imperial:false}).addTo(map);
+</script>
+</body>
+</html>
