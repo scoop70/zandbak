@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toegankelijke kaarten: kleur en arcering</title>
+<style>
+:root{--bg:#f2f5f4;--surface:#fff;--ink:#14212b;--muted:#46545f;--line:#c5d0d3;--accent:#0072b2;--accent-ink:#fff;--code:#e6ecec}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1a21;--surface:#16252e;--ink:#e8eff1;--muted:#a9b8bf;--line:#33474f;--accent:#56b4e9;--accent-ink:#0f1a21;--code:#0c151b}}
+*{box-sizing:border-box}
+html{scroll-padding-top:1rem}
+body{margin:0;background:var(--bg);color:var(--ink);font:1rem/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:62rem;margin:0 auto;padding:1rem 1.25rem 4rem}
+header{padding:2.5rem 0 1rem}
+h1{font:700 clamp(2rem,5vw,3.2rem)/1.1 Charter,Georgia,serif;margin:0 0 .75rem;max-width:20ch}
+header p{max-width:60ch;color:var(--muted);margin:0}
+nav ul{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0;margin:1.5rem 0 0}
+nav a{display:inline-block;padding:.35rem .8rem;border:1px solid var(--line);border-radius:2rem;color:var(--ink);text-decoration:none;background:var(--surface)}
+a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+nav a:hover{border-color:var(--accent)}
+section{margin-top:3rem}
+h2{font:700 1.6rem/1.2 Charter,Georgia,serif;margin:0 0 .5rem}
+h3{font-size:1.05rem;margin:1.5rem 0 .4rem}
+p{max-width:68ch}
+.lead{color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:.5rem;padding:1.25rem}
+.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+table{border-collapse:collapse;width:100%;background:var(--surface)}
+th,td{text-align:left;padding:.6rem .8rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:700;background:var(--code)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:.5rem}
+.scroll table{min-width:34rem}
+pre{background:var(--code);padding:1rem;border-radius:.5rem;overflow-x:auto;font:.88rem/1.5 ui-monospace,Menlo,Consolas,monospace;margin:.75rem 0}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em}
+.sw-row{display:flex;flex-wrap:wrap;gap:.5rem;margin:.5rem 0 1rem}
+.sw{width:5.2rem;font-size:.78rem;line-height:1.3}
+.sw i{display:block;height:2.6rem;border:1px solid #000;border-radius:.25rem;margin-bottom:.2rem}
+.ramp{display:flex;border:1px solid #000;border-radius:.25rem;overflow:hidden;margin:.4rem 0 1rem}
+.ramp span{flex:1;height:1.8rem}
+.demo{display:grid;gap:1rem;grid-template-columns:minmax(0,2fr) minmax(0,1fr);align-items:start}
+@media (max-width:42rem){.demo{grid-template-columns:1fr}}
+.sim{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin:.5rem 0 1rem;border:0;padding:0}
+.sim legend{font-weight:700;margin-bottom:.3rem;padding:0}
+.sim label{cursor:pointer}
+.sim input{accent-color:var(--accent)}
+#kaart{transition:filter .2s}
+.demo svg{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:.4rem;background:#e9eeee}
+.legenda{list-style:none;padding:0;margin:0}
+.legenda li{display:flex;align-items:center;gap:.6rem;margin:.45rem 0}
+.legenda svg{width:2.4rem;height:1.5rem;flex:none;border:0;background:none;border-radius:0}
+.do-dont{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.do-dont .panel{border-top-width:5px}
+.ok{border-top-color:#009e73}.nok{border-top-color:#d55e00}
+.do-dont strong{display:block;margin-bottom:.3rem}
+ol.check{padding-left:1.3rem}
+ol.check li{margin:.4rem 0;max-width:68ch}
+footer{margin-top:3rem;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line);padding-top:1rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<!-- CVD-simulatiefilters -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<filter id="protanopie"><feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0"/></filter>
+<filter id="deuteranopie"><feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0"/></filter>
+<filter id="tritanopie"><feColorMatrix type="matrix" values="0.95 0.05 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0  0 0 0 1 0"/></filter>
+<filter id="grijs"><feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0"/></filter>
+</svg>
+
+<div class="wrap">
+<header>
+  <h1>Toegankelijke kaarten: kleur en arcering</h1>
+  <p>Praktisch overzicht voor kaartmakers en GIS-specialisten: WCAG-eisen, kleurenpaletten, arceringen, legenda en interactie, met voorbeelden voor Leaflet, MapLibre en QGIS.</p>
+  <nav aria-label="Inhoud">
+    <ul>
+      <li><a href="#proef">Probeer het zelf</a></li>
+      <li><a href="#kleur">Kleur is niet genoeg</a></li>
+      <li><a href="#contrast">Contrast</a></li>
+      <li><a href="#paletten">Paletten</a></li>
+      <li><a href="#arcering">Arcering</a></li>
+      <li><a href="#legenda">Legenda</a></li>
+      <li><a href="#interactie">Interactie</a></li>
+      <li><a href="#checklist">Checklist</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+<section id="proef">
+  <h2>Probeer het zelf</h2>
+  <p class="lead">Dezelfde kaart met kleur én arcering. Schakel een simulatie in en controleer of alle klassen nog te onderscheiden zijn.</p>
+  <fieldset class="sim">
+    <legend>Simulatie</legend>
+    <label><input type="radio" name="sim" value="none" checked> Normaal</label>
+    <label><input type="radio" name="sim" value="protanopie"> Protanopie</label>
+    <label><input type="radio" name="sim" value="deuteranopie"> Deuteranopie</label>
+    <label><input type="radio" name="sim" value="tritanopie"> Tritanopie</label>
+    <label><input type="radio" name="sim" value="grijs"> Grijstinten</label>
+  </fieldset>
+  <div class="demo">
+    <div id="kaart">
+      <svg viewBox="0 0 400 280" role="img" aria-labelledby="kt kd">
+        <title id="kt">Voorbeeldkaart met vijf klassen</title>
+        <desc id="kd">Vijf vlakken, elk met een eigen kleur en arcering: A diagonaal, B stippen, C kruisarcering, D horizontaal, E effen.</desc>
+        <defs>
+          <pattern id="pA" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#56b4e9"/><line x1="0" y1="0" x2="0" y2="8" stroke="#003b5c" stroke-width="2.4"/></pattern>
+          <pattern id="pB" width="9" height="9" patternUnits="userSpaceOnUse"><rect width="9" height="9" fill="#e69f00"/><circle cx="4.5" cy="4.5" r="1.9" fill="#4a2f00"/></pattern>
+          <pattern id="pC" width="9" height="9" patternUnits="userSpaceOnUse"><rect width="9" height="9" fill="#009e73"/><path d="M0 0H9M0 0V9" stroke="#00372a" stroke-width="1.8"/></pattern>
+          <pattern id="pD" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#cc79a7"/><line x1="0" y1="4" x2="8" y2="4" stroke="#4d1636" stroke-width="2.4"/></pattern>
+        </defs>
+        <g stroke="#14212b" stroke-width="1.6" stroke-linejoin="round">
+          <polygon points="20,20 170,30 190,130 40,140" fill="url(#pA)"/>
+          <polygon points="170,30 300,15 380,70 350,140 190,130" fill="url(#pB)"/>
+          <polygon points="40,140 190,130 210,250 60,260" fill="url(#pC)"/>
+          <polygon points="190,130 350,140 370,240 210,250" fill="url(#pD)"/>
+          <polygon points="300,15 380,20 380,70" fill="#f0e442"/>
+        </g>
+        <g font-family="system-ui,sans-serif" font-size="15" font-weight="700" text-anchor="middle" stroke="#fff" stroke-width="4" paint-order="stroke" fill="#14212b">
+          <text x="105" y="85">A</text><text x="270" y="85">B</text><text x="125" y="200">C</text><text x="285" y="195">D</text><text x="362" y="38">E</text>
+        </g>
+      </svg>
+    </div>
+    <ul class="legenda" aria-label="Legenda voorbeeldkaart">
+      <li><svg viewBox="0 0 38 24" aria-hidden="true"><rect width="38" height="24" fill="url(#pA)" stroke="#14212b" stroke-width="2"/></svg>A: diagonaal</li>
+      <li><svg viewBox="0 0 38 24" aria-hidden="true"><rect width="38" height="24" fill="url(#pB)" stroke="#14212b" stroke-width="2"/></svg>B: stippen</li>
+      <li><svg viewBox="0 0 38 24" aria-hidden="true"><rect width="38" height="24" fill="url(#pC)" stroke="#14212b" stroke-width="2"/></svg>C: kruisarcering</li>
+      <li><svg viewBox="0 0 38 24" aria-hidden="true"><rect width="38" height="24" fill="url(#pD)" stroke="#14212b" stroke-width="2"/></svg>D: horizontaal</li>
+      <li><svg viewBox="0 0 38 24" aria-hidden="true"><rect width="38" height="24" fill="#f0e442" stroke="#14212b" stroke-width="2"/></svg>E: effen</li>
+    </ul>
+  </div>
+</section>
+
+<section id="kleur">
+  <h2>Kleur is nooit de enige informatiedrager</h2>
+  <p>WCAG 1.4.1. Ongeveer 8% van de mannen en 0,5% van de vrouwen heeft een vorm van kleurenblindheid, meestal rood-groen. Combineer kleur altijd met een tweede kanaal.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Element</th><th>Tweede kanaal</th><th>Voorbeeld</th></tr></thead>
+    <tbody>
+      <tr><td>Punten</td><td>Vorm</td><td>Cirkel, driehoek, vierkant</td></tr>
+      <tr><td>Vlakken</td><td>Arcering of patroon</td><td>Diagonaal, stippen, kruisarcering</td></tr>
+      <tr><td>Lijnen</td><td>Lijnstijl en dikte</td><td>Doorgetrokken, gestreept, stippellijn</td></tr>
+      <tr><td>Waarden</td><td>Direct label</td><td>Getal of naam op het object zelf</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="contrast">
+  <h2>Contrast</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Element</th><th>Minimale verhouding</th><th>Criterium</th></tr></thead>
+    <tbody>
+      <tr><td>Tekst en labels</td><td>4,5 : 1</td><td>WCAG 1.4.3</td></tr>
+      <tr><td>Grote tekst (≥ 18 pt, of 14 pt vet)</td><td>3 : 1</td><td>WCAG 1.4.3</td></tr>
+      <tr><td>Symbolen, lijnen, vlakgrenzen</td><td>3 : 1</td><td>WCAG 1.4.11</td></tr>
+    </tbody>
+  </table></div>
+  <p>Het contrast geldt ten opzichte van de achtergrond én naburige vlakken. Een lichtgele vulling op een lichte basiskaart faalt snel.</p>
+  <div class="do-dont">
+    <div class="panel ok"><strong>Oplossing 1: donkere rand</strong>Geef elk vlak een outline van minstens 1 px in een donkere kleur.</div>
+    <div class="panel ok"><strong>Oplossing 2: halo om labels</strong>Gebruik een witte halo (stroke) rond donkere tekst, zodat de tekst op elke vulling leesbaar blijft.</div>
+  </div>
+<pre><code>// Leaflet: vlak met voldoende contrast
+L.geoJSON(data, {
+  style: f =&gt; ({
+    fillColor: kleurVoor(f.properties.klasse),
+    fillOpacity: 0.75,
+    color: '#222',   // rand, contrast ≥ 3:1
+    weight: 1.2
+  })
+});</code></pre>
+</section>
+
+<section id="paletten">
+  <h2>Kleurenblindveilige paletten</h2>
+  <h3>Sequentieel (laag naar hoog)</h3>
+  <p>Eén tint met oplopende lichtheid. Gebruik viridis, cividis (speciaal voor kleurenblinden ontworpen) of ColorBrewer YlGnBu en Blues.</p>
+  <div class="ramp" role="img" aria-label="Viridis in vijf klassen, van geel naar donkerpaars">
+    <span style="background:#fde725"></span><span style="background:#5ec962"></span><span style="background:#21918c"></span><span style="background:#3b528b"></span><span style="background:#440154"></span>
+  </div>
+  <h3>Divergerend (neutraal midden)</h3>
+  <p>Vermijd rood-groen. Gebruik BrBG, PuOr of RdBu.</p>
+  <div class="ramp" role="img" aria-label="Bruin via wit naar blauwgroen, zeven klassen">
+    <span style="background:#8c510a"></span><span style="background:#d8b365"></span><span style="background:#f6e8c3"></span><span style="background:#f5f5f5"></span><span style="background:#c7eae5"></span><span style="background:#5ab4ac"></span><span style="background:#01665e"></span>
+  </div>
+  <h3>Kwalitatief (categorieën)</h3>
+  <p>Maximaal 6 tot 8 klassen. Okabe-Ito is ontworpen voor alle vormen van kleurenblindheid.</p>
+  <div class="sw-row">
+    <div class="sw"><i style="background:#e69f00"></i>#E69F00 oranje</div>
+    <div class="sw"><i style="background:#56b4e9"></i>#56B4E9 hemelsblauw</div>
+    <div class="sw"><i style="background:#009e73"></i>#009E73 groen</div>
+    <div class="sw"><i style="background:#f0e442"></i>#F0E442 geel</div>
+    <div class="sw"><i style="background:#0072b2"></i>#0072B2 blauw</div>
+    <div class="sw"><i style="background:#d55e00"></i>#D55E00 vermiljoen</div>
+    <div class="sw"><i style="background:#cc79a7"></i>#CC79A7 roodpaars</div>
+    <div class="sw"><i style="background:#000"></i>#000000 zwart</div>
+  </div>
+  <p><strong>Testen:</strong> Color Oracle (simuleert live over je scherm), Coblis, of in QGIS via <em>Beeld → Kleurenblindheid simuleren</em> (protanopie, deuteranopie, tritanopie).</p>
+</section>
+
+<section id="arcering">
+  <h2>Arceringen en patronen</h2>
+  <ul>
+    <li>Maximaal 3 tot 4 verschillende patronen in één kaart.</li>
+    <li>Varieer in richting en dichtheid: diagonaal, horizontaal, kruis, stippen.</li>
+    <li>Houd lijndikte en tussenruimte groot genoeg voor kleine schermen. Vermijd moiré door zeer fijne lijnen.</li>
+    <li>De patroonkleur contrasteert minstens 3 : 1 met de vulkleur.</li>
+  </ul>
+  <h3>SVG-patroon in Leaflet</h3>
+<pre><code>&lt;svg width="0" height="0"&gt;
+  &lt;defs&gt;
+    &lt;pattern id="diag" width="8" height="8" patternUnits="userSpaceOnUse"
+             patternTransform="rotate(45)"&gt;
+      &lt;rect width="8" height="8" fill="#56B4E9"/&gt;
+      &lt;line x1="0" y1="0" x2="0" y2="8" stroke="#003B5C" stroke-width="2"/&gt;
+    &lt;/pattern&gt;
+  &lt;/defs&gt;
+&lt;/svg&gt;
+
+// Leaflet
+style: { fillColor: 'url(#diag)', fillOpacity: 1, color: '#222', weight: 1 }</code></pre>
+  <h3>QGIS</h3>
+  <p>Symbologie → symboollaag toevoegen → <em>Lijnpatroonvulling</em>, <em>Puntpatroonvulling</em> of <em>SVG-vulling</em>. Zet deze als tweede laag boven een effen kleurvulling.</p>
+  <h3>MapLibre GL</h3>
+  <p>Gebruik <code>fill-pattern</code> met een sprite-afbeelding. Let op: bij <code>fill-pattern</code> werkt <code>fill-color</code> niet, dus maak per klasse een sprite met kleur en patroon in één.</p>
+</section>
+
+<section id="legenda">
+  <h2>Legenda</h2>
+  <div class="do-dont">
+    <div class="panel ok"><strong>Wel</strong>Volledig symbool tonen (kleur, patroon, rand). Zelfde volgorde als op de kaart. Echte HTML-tekst.</div>
+    <div class="panel nok"><strong>Niet</strong>Alleen een kleurvlak. Een legenda als afbeelding. Meer dan 5 tot 7 sequentiële klassen.</div>
+  </div>
+<pre><code>&lt;ul class="legenda" aria-label="Legenda: aantal meldingen"&gt;
+  &lt;li&gt;&lt;span class="sw" style="background:#fde725"&gt;&lt;/span&gt; 0 – 5&lt;/li&gt;
+  &lt;li&gt;&lt;span class="sw" style="background:#21918c"&gt;&lt;/span&gt; 6 – 20&lt;/li&gt;
+  &lt;li&gt;&lt;span class="sw" style="background:#440154"&gt;&lt;/span&gt; &amp;gt; 20&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+  <p>Gebruik een neutrale, gedempte basiskaart zodat de thematische laag opvalt, en test op elke achtergrond uit een basiskaartkiezer (licht, donker, satelliet). Maak voor dark mode een eigen palet en keer kleuren niet simpelweg om.</p>
+</section>
+
+<section id="interactie">
+  <h2>Interactie en niet-visuele toegang</h2>
+  <ul>
+    <li>Toetsenbordbediening voor zoomen, pannen, lagen en objectselectie.</li>
+    <li>Zichtbare focusindicator met contrast ≥ 3 : 1.</li>
+    <li>Bied de data ook als tabel of lijst aan, plus een korte tekstuele samenvatting van de kaart.</li>
+    <li>Pop-ups bereikbaar met toetsenbord, gekoppeld met <code>aria-describedby</code>.</li>
+    <li>Respecteer <code>prefers-reduced-motion</code> en <code>prefers-contrast</code>.</li>
+  </ul>
+<pre><code>@media (prefers-contrast: more) {
+  .kaartvlak { stroke-width: 2.5px; stroke: #000; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animatie { animation: none; }
+}</code></pre>
+</section>
+
+<section id="checklist">
+  <h2>Checklist</h2>
+  <ol class="check">
+    <li>Is kleur nooit de enige informatiedrager?</li>
+    <li>Voldoen tekst (4,5 : 1) en grafische elementen (3 : 1)?</li>
+    <li>Palet getest op protanopie, deuteranopie en tritanopie?</li>
+    <li>Nog te onderscheiden in grijstinten of zwart-wit afdruk?</li>
+    <li>Patronen onderscheidbaar op een klein scherm en bij uitzoomen?</li>
+    <li>Legenda toont het volledige symbool en bestaat als echte tekst?</li>
+    <li>Toetsenbord, focus en tekstalternatief geregeld?</li>
+  </ol>
+</section>
+</main>
+
+<footer>Richtlijnen gebaseerd op WCAG 2.1/2.2, ColorBrewer, viridis/cividis en het Okabe-Ito palet.</footer>
+</div>
+
+<script>
+const kaart=document.getElementById('kaart');
+document.querySelectorAll('input[name=sim]').forEach(r=>r.addEventListener('change',e=>{
+  const v=e.target.value;
+  kaart.style.filter=v==='none'?'none':'url(#'+v+')';
+}));
+</script>
+</body>
+</html>
