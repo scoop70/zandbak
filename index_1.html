@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เรียนภาษาดัตช์ - Inburgering in Thailand - Dutch4Thai.com KhonKaen</title>
+<meta name="author" content="Ohm vd Vlies">
+<meta name="copyright" content="Dutch4Thai.com">
+<meta name="description" content="เรียนภาษาดัตช์ Bij dutch4thai worden Nederlandse taal en inburgeringscursus gegeven, die bedoeld is voor Thaise mensen die doormiddel van een MVV (machtiging voorlopig verblijf) vanuit Thailand naar Nederland willen komen.">
+<meta name="keywords" content="เรียนภาษาดัตช์, ภาษาดัตช์, การสอบภาษาดัตช์, Nederlands, Nederlandse, ambassade, bangkok, leren, les, taal, samenleving, MVV, M.V.V., cursus, in, Thailand, Khon Kaen, platteland, Thai, Dutch, Homeschool, lessen, school, verblijfsvergunning, toelatingsexamen, examen, visum, visa, inburgeringscursus, inburgering, cursist, cursisten, basisexamen, inburgering, ambassade, machtiging, voorlopig, verblijf, taalcursus, inburgeringscursus">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.dutch4thai.com/">
+<meta property="og:title" content="De cursus Inburgering van Dutch4Thai is bedoeld om het inburgeringsdiploma te behalen volgens de Wet inburgering.">
+<meta property="og:description" content="เรียนภาษาดัตช์ - Nederlands leren in Thailand">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.dutch4thai.com/">
+<meta property="og:image" content="https://dutch4thai.com/images/dutch4thai-logo.png">
+<meta property="og:image:secure_url" content="https://dutch4thai.com/images/dutch4thai-logo.png">
+<meta name="theme-color" content="#0d0f3c">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ink:#0d0f3c;
+  --ink-2:#161a6b;
+  --blue:#2b34d6;
+  --orange:#ff6a13;
+  --pink:#ff3d8b;
+  --cyan:#25e1d0;
+  --lav:#f3f1ff;
+  --white:#ffffff;
+  --text:#1a1c4a;
+  --muted:#58597f;
+  --grad-hot:linear-gradient(135deg,#ff6a13 0%,#ff3d8b 100%);
+  --grad-cool:linear-gradient(135deg,#2b34d6 0%,#25e1d0 120%);
+  --display:'Bricolage Grotesque','Noto Sans Thai',system-ui,sans-serif;
+  --body:'Plus Jakarta Sans','Noto Sans Thai',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{margin:0;font-family:var(--body);color:var(--text);background:var(--lav);line-height:1.65;font-size:1.05rem;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit}
+h1,h2,h3,h4,h5,h6{font-family:var(--display);line-height:1.1;margin:0 0 .6em;letter-spacing:-.02em}
+p{margin:0 0 1em}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:3px;border-radius:8px}
+.wrap{width:min(1180px,92vw);margin-inline:auto}
+
+/* progress */
+.progress{position:fixed;inset:0 0 auto 0;height:4px;z-index:100;background:transparent}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff3b3b 0 33%,#fff 33% 66%,#2b34d6 66%);box-shadow:0 0 12px rgba(255,106,19,.8)}
+
+/* nav */
+.nav{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:90;width:min(1100px,94vw);display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.55rem .7rem .55rem .8rem;border-radius:999px;background:rgba(13,15,60,.55);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 40px rgba(5,6,40,.35);transition:transform .5s var(--ease),background .3s}
+.nav.hide{transform:translate(-50%,-140%)}
+.nav .logo{display:flex;align-items:center;background:#fff;border-radius:999px;padding:.25rem .8rem}
+.nav .logo img{height:34px;width:auto}
+.nav ul{list-style:none;margin:0;padding:0;display:flex;gap:.25rem}
+.nav ul a{display:block;text-decoration:none;color:#fff;font-weight:500;font-size:.96rem;padding:.55rem 1.05rem;border-radius:999px;transition:background .25s,color .25s}
+.nav ul a:hover{background:rgba(255,255,255,.14)}
+.nav ul a.active{background:var(--grad-hot);box-shadow:0 6px 18px rgba(255,61,139,.45)}
+.burger{display:none;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-size:1.3rem;cursor:pointer}
+
+/* hero */
+.hero{position:relative;background:radial-gradient(1200px 700px at 80% 10%,#2b34d6 0%,transparent 60%),radial-gradient(900px 600px at 0% 100%,#7a1fa2 0%,transparent 60%),var(--ink);color:#fff;padding:9rem 0 6rem;overflow:hidden;isolation:isolate}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 20%,transparent 75%);mask-image:radial-gradient(ellipse at 50% 40%,#000 20%,transparent 75%)}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.65;z-index:-1;animation:float 16s ease-in-out infinite}
+.b1{width:420px;height:420px;background:var(--orange);top:-120px;left:-100px}
+.b2{width:380px;height:380px;background:var(--pink);right:-80px;bottom:5%;animation-delay:-5s}
+.b3{width:300px;height:300px;background:var(--cyan);left:40%;bottom:-140px;opacity:.35;animation-delay:-9s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-50px) scale(1.12)}}
+.glow{position:absolute;width:520px;height:520px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(255,255,255,.14),transparent 65%);left:var(--mx,50%);top:var(--my,30%);transform:translate(-50%,-50%);z-index:-1}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:3rem;align-items:center}
+.hero h1{font-size:clamp(2.8rem,7.4vw,6.2rem);font-weight:800;letter-spacing:-.04em;margin-bottom:.35em;text-wrap:balance}
+.hero h1 .w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em}
+.hero h1 .w span{display:inline-block;transform:translateY(110%) rotate(6deg);animation:rise .9s var(--ease) forwards;animation-delay:calc(var(--i)*.12s + .15s)}
+@keyframes rise{to{transform:none}}
+.hero .lead{font-size:1.18rem;color:rgba(255,255,255,.86);max-width:60ch;font-weight:400;font-family:var(--body);letter-spacing:0;line-height:1.7;margin-bottom:1.6rem}
+.free{margin:0 0 .9rem;color:rgba(255,255,255,.9);font-weight:500}
+.cta-row{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;margin-bottom:0}
+.cta-row .and{opacity:.75}
+.btn{position:relative;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;font-weight:700;padding:.9rem 1.4rem;border-radius:16px;color:#fff;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);backdrop-filter:blur(8px);transition:transform .35s var(--ease),box-shadow .35s,background .3s;overflow:hidden}
+.btn::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%);transform:translateX(-120%);transition:transform .7s var(--ease)}
+.btn:hover{transform:translateY(-3px) scale(1.02)}
+.btn:hover::after{transform:translateX(120%)}
+.btn.hot{background:var(--grad-hot);border-color:transparent;box-shadow:0 12px 30px rgba(255,61,139,.45)}
+.btn.cool{background:var(--grad-cool);border-color:transparent;box-shadow:0 12px 30px rgba(43,52,214,.5)}
+.login{margin-bottom:1.3rem}
+.login strong{display:block;margin-bottom:.7rem;font-family:var(--display);font-size:1.15rem}
+.pills{display:flex;flex-wrap:wrap;gap:.55rem}
+.pill{text-decoration:none;font-weight:600;font-size:.95rem;padding:.55rem 1.05rem;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;transition:background .25s,color .25s,transform .3s var(--ease)}
+.pill:hover{background:#fff;color:var(--ink);transform:translateY(-3px) rotate(-1.5deg)}
+.chips{display:flex;flex-wrap:wrap;gap:.6rem}
+.chip{font-size:.92rem;font-weight:500;padding:.5rem .95rem;border-radius:12px;background:rgba(37,225,208,.14);border:1px solid rgba(37,225,208,.4);color:#d6fffb}
+.hero-visual{position:relative;perspective:1000px}
+.frame{position:relative;border-radius:38px 120px 38px 120px;overflow:hidden;aspect-ratio:5/4;transform-style:preserve-3d;transition:transform .2s ease-out;box-shadow:0 40px 80px rgba(0,0,0,.45);border:2px solid rgba(255,255,255,.35)}
+.frame img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);animation:kb 18s ease-in-out infinite alternate}
+@keyframes kb{to{transform:scale(1.2) translate(-2%,-2%)}}
+.frame::after{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,106,19,.25),transparent 45%,rgba(43,52,214,.35))}
+.hero-visual::before{content:"";position:absolute;inset:6% -6% -6% 6%;border-radius:38px 120px 38px 120px;background:var(--grad-hot);z-index:-1;transform:rotate(4deg);opacity:.9}
+.hero-visual::after{content:"";position:absolute;width:120px;height:120px;border-radius:50%;border:3px dashed var(--cyan);left:-40px;bottom:12%;animation:spin 18s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+
+/* A1 offer panel */
+@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes spinA{to{--a:360deg}}
+@keyframes offerIn{to{opacity:1;transform:none}}
+.offer{position:relative;margin-top:3.2rem;border-radius:44px 44px 100px 44px;padding:clamp(1.3rem,3vw,2.6rem);background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 30px 80px rgba(0,0,0,.4);opacity:0;transform:translateY(34px);animation:offerIn 1s var(--ease) .9s forwards}
+.offer::before{content:"";position:absolute;inset:-2px;border-radius:inherit;padding:2px;background:conic-gradient(from var(--a,0deg),#ff6a13,#ff3d8b,#7a1fa2,#25e1d0,#2b34d6,#ff6a13);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.75;animation:spinA 9s linear infinite;pointer-events:none}
+.offer-cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.4rem,3vw,3rem)}
+.lang-col{min-width:0}
+.lang-col+.lang-col{border-left:1px solid rgba(255,255,255,.2);padding-left:clamp(1.4rem,3vw,3rem)}
+.offer h2{font-size:clamp(1.6rem,2.8vw,2.3rem);font-weight:800;letter-spacing:-.03em;margin-bottom:.7rem;text-wrap:balance}
+.offer .intro{color:rgba(255,255,255,.9);margin-bottom:1.2rem}
+.lang-col[lang=th]{line-height:1.8}
+.opts{display:grid;gap:1rem;margin:0 0 1.2rem}
+.opt{position:relative;overflow:hidden;border-radius:26px;padding:1.2rem 1.4rem 1.2rem 1.7rem;background:rgba(13,15,60,.55);border:1px solid rgba(255,255,255,.18);transition:transform .4s var(--ease),box-shadow .4s}
+.opt:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.opt::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--grad-hot)}
+.opt:nth-child(2)::before{background:var(--grad-cool)}
+.opt h3{font-family:var(--display);font-size:1.18rem;margin:0 0 .7rem;letter-spacing:-.01em}
+.opt h3::before{content:"🏫 "}
+.opt:nth-child(2) h3::before{content:"💻 "}
+.opt ul{list-style:none;margin:0;padding:0;display:grid;gap:.35rem}
+.opt li{position:relative;padding-left:1.15rem}
+.opt li::before{content:"";position:absolute;left:0;top:.7em;width:8px;height:8px;border-radius:50%;background:var(--cyan)}
+.lang-col[lang=th] .opt li::before{top:.85em}
+.opt li.price{margin-top:.35rem}
+.opt li.price strong{display:inline-block;font-family:var(--display);font-size:1.3rem;font-weight:800;padding:.1rem .85rem;border-radius:12px;background:var(--grad-hot);box-shadow:0 8px 22px rgba(255,61,139,.4)}
+.opt:nth-child(2) li.price strong{background:var(--grad-cool);box-shadow:0 8px 22px rgba(43,52,214,.5)}
+.offer .closing{margin:0;font-weight:600;color:#d6fffb}
+.offer-tabs{display:none}
+.tab{flex:1;border:0;cursor:pointer;font:inherit;font-weight:700;color:#fff;padding:.7rem 1rem;border-radius:999px;background:transparent;transition:background .3s,color .3s}
+.tab.on{background:var(--grad-hot);box-shadow:0 8px 20px rgba(255,61,139,.45)}
+.hero-actions{display:grid;grid-template-columns:1fr 1fr;gap:2rem 3rem;margin-top:3rem;align-items:start}
+
+/* waves */
+.wave{display:block;width:100%;height:80px;margin-top:-1px}
+.wave-top{position:absolute;left:0;right:0;bottom:-1px}
+
+/* sections */
+section{position:relative}
+.sec{padding:7rem 0}
+.title{font-size:clamp(2.1rem,5vw,3.8rem);font-weight:800;letter-spacing:-.035em;text-wrap:balance}
+
+/* exam */
+#features-section{background:var(--lav)}
+.exam-intro{max-width:70ch;font-size:1.15rem;color:var(--muted)}
+.sub{font-size:1.6rem;margin:2.6rem 0 1.4rem}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem}
+.card{--c:var(--orange);position:relative;background:#fff;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(30,32,120,.12);transition:transform .45s var(--ease),box-shadow .45s;transform-style:preserve-3d}
+.card:nth-child(2){--c:var(--pink);margin-top:2.4rem;border-radius:30px 30px 90px 30px}
+.card:nth-child(3){--c:var(--blue);border-radius:30px 90px 30px 30px}
+.card:nth-child(1){border-radius:90px 30px 30px 30px}
+.card:hover{box-shadow:0 30px 70px rgba(30,32,120,.25)}
+.card .img{position:relative;aspect-ratio:16/11;overflow:hidden}
+.card .img img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+.card:hover .img img{transform:scale(1.1)}
+.card .img::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--c)}
+.card .body{padding:1.6rem 1.7rem 1.9rem;display:flex;flex-direction:column;flex:1}
+.card h5{font-size:1.5rem;color:var(--ink)}
+.card p{color:var(--muted)}
+.card .more{margin-top:auto;align-self:flex-start;text-decoration:none;font-weight:700;color:#fff;background:var(--c);padding:.65rem 1.1rem;border-radius:999px;transition:transform .3s var(--ease),box-shadow .3s}
+.card .more:hover{transform:translateX(6px);box-shadow:0 10px 24px rgba(0,0,0,.25)}
+
+/* modules */
+#digital-marketing-section{background:var(--ink);color:#fff;overflow:hidden;isolation:isolate}
+#digital-marketing-section::before{content:"";position:absolute;width:640px;height:640px;border-radius:50%;background:var(--blue);filter:blur(120px);opacity:.55;right:-200px;top:-120px;z-index:-1}
+#digital-marketing-section::after{content:"";position:absolute;width:480px;height:480px;border-radius:50%;background:var(--pink);filter:blur(130px);opacity:.3;left:-180px;bottom:-100px;z-index:-1}
+.mod-title{font-size:clamp(1.7rem,4vw,3rem);font-weight:800;text-wrap:balance}
+.mod-sub{font-size:clamp(1.4rem,3vw,2.2rem);font-weight:500;color:var(--cyan);margin-bottom:2.4rem;text-wrap:balance}
+.mod-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:start}
+.glass{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:32px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:2.2rem;box-shadow:0 30px 60px rgba(0,0,0,.25)}
+.glass h4{font-size:2rem;margin-bottom:1rem}
+.glass p{color:rgba(255,255,255,.88)}
+.fine{display:inline-block;margin:.4rem 0 0;padding:.8rem 1.2rem;border-radius:16px;background:var(--grad-hot);font-weight:700;box-shadow:0 14px 34px rgba(255,61,139,.4)}
+.divider{border:0;height:1px;margin:1.6rem 0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent)}
+.fb{border-radius:32px;overflow:hidden;background:#fff;padding:.7rem;box-shadow:0 30px 70px rgba(0,0,0,.4);justify-self:center;max-width:100%}
+.fb iframe{border:0;display:block;width:500px;max-width:100%;height:640px;border-radius:22px}
+
+/* students */
+#students{background:var(--lav);overflow:hidden}
+.stu-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:1.5rem;margin-bottom:2.4rem}
+.stu-head h6{font-family:var(--body);font-weight:500;font-size:1.15rem;color:var(--muted);letter-spacing:0;margin:0}
+.arrows{display:flex;gap:.6rem}
+.arrow{width:54px;height:54px;border-radius:50%;border:0;cursor:pointer;font-size:1.5rem;color:#fff;background:var(--grad-cool);box-shadow:0 12px 26px rgba(43,52,214,.4);transition:transform .3s var(--ease),opacity .3s}
+.arrow:hover{transform:scale(1.1)}
+.arrow:disabled{opacity:.35;cursor:default;transform:none}
+.slider{position:relative}
+.track{display:flex;gap:1.5rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:1rem max(4vw,calc((100vw - 1180px)/2)) 2rem;scrollbar-width:none;cursor:grab;-webkit-overflow-scrolling:touch}
+.track::-webkit-scrollbar{display:none}
+.track.drag{cursor:grabbing;scroll-snap-type:none;scroll-behavior:auto}
+.slide{flex:0 0 min(320px,78vw);scroll-snap-align:center;background:#fff;border-radius:34px;overflow:hidden;box-shadow:0 22px 50px rgba(30,32,120,.16);transition:transform .45s var(--ease),box-shadow .45s;user-select:none}
+.slide:hover{transform:translateY(-10px) rotate(-1deg);box-shadow:0 34px 70px rgba(30,32,120,.28)}
+.slide:nth-child(even):hover{transform:translateY(-10px) rotate(1deg)}
+.slide .pic{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--ink)}
+.slide .pic img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease);-webkit-user-drag:none}
+.slide:hover .pic img{transform:scale(1.08)}
+.slide .play{position:absolute;inset:0;display:grid;place-items:center;border:0;background:linear-gradient(to top,rgba(13,15,60,.65),transparent 55%);cursor:pointer;color:#fff}
+.slide .play span{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;font-size:1.8rem;padding-left:5px;background:var(--grad-hot);box-shadow:0 0 0 0 rgba(255,61,139,.7);animation:pulse 2.2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 22px rgba(255,61,139,0)}100%{box-shadow:0 0 0 0 rgba(255,61,139,0)}}
+.slide .meta{padding:1.2rem 1.4rem 1.5rem;display:flex;flex-direction:column;gap:.8rem;align-items:flex-start}
+.slide h6{font-family:var(--body);font-size:.95rem;font-weight:700;margin:0;color:var(--muted);letter-spacing:0}
+.slide .btn-film{border:0;cursor:pointer;font:inherit;font-weight:700;color:#fff;background:var(--grad-cool);padding:.65rem 1.2rem;border-radius:999px;transition:transform .3s var(--ease)}
+.slide .btn-film:hover{transform:scale(1.06)}
+.slide.more .meta{min-height:100%}
+.slide.more h6{font-size:1.15rem;color:var(--ink);font-family:var(--display)}
+.dots{display:flex;justify-content:center;gap:.5rem;margin-top:.3rem}
+.dots button{width:10px;height:10px;border-radius:99px;border:0;padding:0;cursor:pointer;background:#c4c1ee;transition:width .4s var(--ease),background .3s}
+.dots button.on{width:34px;background:var(--orange)}
+
+/* thai banner */
+.banner{position:relative;min-height:420px;display:grid;place-items:center;overflow:hidden;color:#fff;text-align:center;padding:5rem 0;isolation:isolate}
+.banner>img{position:absolute;left:0;top:-15%;width:100%;height:130%;object-fit:cover;z-index:-2;will-change:transform}
+.banner::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(120deg,rgba(13,15,60,.88),rgba(122,31,162,.6) 60%,rgba(255,106,19,.55))}
+.banner .chips{justify-content:center;margin-bottom:1.6rem}
+.banner .chip{font-size:clamp(1.05rem,2.4vw,1.5rem);padding:.8rem 1.4rem;border-radius:18px;background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.4);color:#fff;font-weight:600;backdrop-filter:blur(10px)}
+.banner p{font-size:1.2rem;margin:0}
+.banner p a{display:inline-block;margin-left:.4rem;text-decoration:none;font-weight:700;color:#fff;background:var(--grad-hot);padding:.6rem 1.2rem;border-radius:999px;box-shadow:0 12px 28px rgba(255,61,139,.5);transition:transform .3s var(--ease)}
+.banner p a:hover{transform:scale(1.07)}
+
+/* thai */
+.thai{background:var(--lav)}
+.thai .title{font-family:'Bricolage Grotesque','Noto Sans Thai',sans-serif}
+.thai-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;margin-top:2rem}
+.thai-card{background:#fff;border-radius:30px;padding:2rem 2.2rem;box-shadow:0 20px 50px rgba(30,32,120,.1)}
+.thai-card h5{font-family:var(--body);font-size:1.12rem;font-weight:500;line-height:1.85;letter-spacing:0;margin:0 0 1.1rem;color:var(--text)}
+.thai-card h5:last-child{margin:0}
+.thai-card.reason{grid-column:1/-1;background:var(--ink);color:#fff;position:relative;overflow:hidden}
+.thai-card.reason::before{content:"";position:absolute;width:360px;height:360px;border-radius:50%;background:var(--pink);filter:blur(100px);opacity:.45;right:-100px;top:-120px}
+.thai-card.reason h5{position:relative;color:#fff}
+.thai-card.reason h5:first-child{font-family:var(--display);font-weight:800;font-size:1.7rem;color:var(--cyan)}
+
+/* footer */
+footer{background:var(--ink);color:#fff;position:relative;overflow:hidden;isolation:isolate}
+footer::before{content:"";position:absolute;width:520px;height:520px;border-radius:50%;background:var(--blue);filter:blur(130px);opacity:.5;left:-160px;top:-160px;z-index:-1}
+.foot{padding:6rem 0 4rem;display:grid;grid-template-columns:1.1fr 1fr 1.1fr 1.1fr;gap:2.4rem}
+.foot h5{font-size:1.25rem;margin-bottom:1rem;color:var(--cyan)}
+.foot .flogo{display:inline-block;background:#fff;border-radius:22px;padding:.8rem 1.1rem;margin-bottom:1.2rem}
+.foot .flogo img{height:56px;width:auto}
+.foot p{color:rgba(255,255,255,.85);margin:0 0 .5rem}
+.foot a{color:#fff;text-decoration-color:rgba(255,255,255,.4);text-underline-offset:4px;word-break:break-word}
+.foot a:hover{text-decoration-color:var(--orange)}
+.foot .msg{display:inline-flex;margin-top:.8rem;padding:.8rem 1.3rem;border-radius:16px;background:var(--grad-hot);text-decoration:none;font-weight:700;box-shadow:0 14px 34px rgba(255,61,139,.4);transition:transform .3s var(--ease)}
+.foot .msg:hover{transform:translateY(-3px) scale(1.03)}
+.foot .social a{display:block;margin-bottom:.5rem}
+.zee{position:relative;min-height:320px;display:flex;align-items:flex-end;overflow:hidden}
+.zee img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.zee::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,rgba(13,15,60,.92),rgba(13,15,60,.15) 65%,var(--ink) 100%)}
+.zee p{margin:0;padding:2rem 0;font-weight:600}
+
+/* fab + dialogs */
+.fab{position:fixed;right:20px;bottom:20px;z-index:80;width:62px;height:62px;border-radius:50%;border:0;cursor:pointer;font-size:1.6rem;background:var(--grad-hot);box-shadow:0 14px 34px rgba(255,61,139,.55);transition:transform .35s var(--ease)}
+.fab:hover{transform:scale(1.12) rotate(-8deg)}
+.fab::before{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--pink);animation:ring 2.4s infinite}
+@keyframes ring{to{transform:scale(1.7);opacity:0}}
+dialog{border:0;padding:0;border-radius:30px;max-width:min(720px,94vw);width:100%;background:var(--ink);color:#fff;box-shadow:0 40px 100px rgba(0,0,0,.6);overflow:hidden}
+dialog::backdrop{background:rgba(7,8,36,.72);backdrop-filter:blur(8px)}
+dialog[open]{animation:pop .45s var(--ease)}
+@keyframes pop{from{opacity:0;transform:translateY(30px) scale(.94)}}
+dialog .inner{padding:1.6rem}
+dialog video{width:100%;max-height:70vh;border-radius:20px;background:#000;display:block}
+dialog .close{margin-top:1rem;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);color:#fff;font:inherit;font-weight:700;padding:.7rem 1.3rem;border-radius:999px;cursor:pointer;transition:background .3s}
+dialog .close:hover{background:var(--grad-hot)}
+dialog h4{font-size:2rem}
+dialog a{color:var(--cyan);font-weight:700}
+
+/* reveal */
+.js [data-reveal]{opacity:0;transform:translateY(34px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--d,0s)}
+.js [data-reveal].in{opacity:1;transform:none}
+.js .card[data-reveal].in:nth-child(2){transform:none}
+
+@media (max-width:980px){
+  .hero-grid,.mod-grid,.thai-grid{grid-template-columns:1fr}
+  .hero-visual{max-width:460px;margin-inline:auto}
+  .cards{grid-template-columns:1fr;max-width:520px;margin-inline:auto}
+  .card:nth-child(2){margin-top:0}
+  .foot{grid-template-columns:1fr 1fr}
+}
+@media (max-width:760px){
+  .burger{display:block}
+  .nav ul{position:absolute;top:calc(100% + 10px);left:0;right:0;flex-direction:column;padding:.7rem;border-radius:26px;background:rgba(13,15,60,.92);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.18);opacity:0;pointer-events:none;transform:translateY(-10px);transition:.3s var(--ease)}
+  .nav.open ul{opacity:1;pointer-events:auto;transform:none}
+  .nav ul a{padding:.9rem 1.1rem}
+  .hero{padding-top:7.5rem}
+  .sec{padding:5rem 0}
+  .foot{grid-template-columns:1fr}
+  .fb iframe{height:560px}
+}
+@media (max-width:860px){
+  .hero-actions{grid-template-columns:1fr;margin-top:2.2rem}
+  .offer{margin-top:2.2rem;border-radius:32px 32px 60px 32px}
+  .offer-tabs{display:flex;gap:.3rem;padding:.3rem;margin-bottom:1.2rem;border-radius:999px;background:rgba(13,15,60,.55);border:1px solid rgba(255,255,255,.2)}
+  .offer-cols{grid-template-columns:1fr}
+  .lang-col:not(.on){display:none}
+  .lang-col+.lang-col{border-left:0;padding-left:0}
+  .offer .closing{display:none}
+  .offer .intro{font-size:.98rem;margin-bottom:1rem}
+  .opt{padding:1rem 1.1rem 1rem 1.4rem;border-radius:22px}
+  .opt h3{font-size:1.05rem;margin-bottom:.5rem}
+  .opt ul{font-size:.96rem}
+}
+@media (max-width:760px){
+  .hero-visual{max-width:none}
+  .frame{aspect-ratio:16/10;border-radius:28px 70px 28px 70px}
+  .hero-visual::before{border-radius:28px 70px 28px 70px}
+  .hero-visual::after{display:none}
+  .hero .lead{font-size:1.02rem;margin-bottom:0}
+  .hero-grid{gap:1.8rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .hero h1 .w span{transform:none}
+  .js [data-reveal]{opacity:1;transform:none}
+  .offer{opacity:1;transform:none}
+}
+</style>
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"><i id="bar"></i></div>
+
+<header>
+<nav class="nav" id="nav">
+  <a class="logo" href="#header-section"><img src="https://dutch4thai.com/images/dutch4thai-logo.png" alt="Dutch4Thai logo"></a>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false">☰</button>
+  <ul id="menu">
+    <li><a href="#header-section" class="active">Home<span class="sr-only">(current)</span></a></li>
+    <li><a href="#features-section">Inburgeringsexamen</a></li>
+    <li><a href="#digital-marketing-section">Methode</a></li>
+    <li><a href="#thai-section">ภาษาไทย</a></li>
+  </ul>
+</nav>
+</header>
+
+<main>
+
+<!-- HERO -->
+<section class="hero" id="header-section">
+  <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+  <span class="glow" id="glow"></span>
+  <div class="wrap">
+
+    <div class="hero-grid">
+      <div>
+        <h1 id="h1">Nederlands leren in Thailand</h1>
+        <h6 class="lead">Wil jij succesvol integreren in Nederland? Bij Dutch4Thai helpen wij je graag met onze Inburgeringscursus.  Of je nu beginner bent of al ervaring hebt, iedereen is welkom! Onze cursus is verplicht voor het aanvragen van een MVV. Word snel deel van de Nederlandse samenleving en schrijf je vandaag nog in!</h6>
+      </div>
+
+      <div class="hero-visual" id="tiltWrap">
+        <div class="frame" id="tilt"><img src="https://dutch4thai.com/images/khonkaen.jpg" alt="Nong Waeng Temple in Khon Kaen"></div>
+      </div>
+    </div>
+
+    <!-- Doelgerichte examentraining (A1) -->
+    <section class="offer" id="examentraining-a1">
+      <div class="offer-tabs" role="tablist">
+        <button class="tab on" type="button" role="tab" data-lang="nl" aria-selected="true">Nederlands</button>
+        <button class="tab" type="button" role="tab" data-lang="th" aria-selected="false">ไทย</button>
+      </div>
+
+      <div class="offer-cols">
+        <div class="lang-col on" data-col="nl" lang="nl">
+          <h2>Doelgerichte examentraining (A1)</h2>
+          <p class="intro">Bereid je optimaal voor op het A1-examen met onze doelgerichte examentraining.<br>Kies de cursus die het beste bij jou past!</p>
+          <div class="opts">
+            <div class="opt">
+              <h3>Optie 1: Klassikale cursus – 4 weken</h3>
+              <ul>
+                <li>Locatie: Khon Kaen</li>
+                <li>Duur: 4 weken</li>
+                <li class="price">Kosten: <strong>17.500 baht</strong></li>
+              </ul>
+            </div>
+            <div class="opt">
+              <h3>Optie 2: Online cursus – 30 dagen</h3>
+              <ul>
+                <li>Volg de training online, waar en wanneer het jou uitkomt.</li>
+                <li>Duur: 30 dagen</li>
+                <li class="price">Kosten: <strong>8.900 baht</strong></li>
+              </ul>
+            </div>
+          </div>
+          <p class="closing">Kies jouw favoriete leermethode en werk gericht toe naar het behalen van je A1-examen!</p>
+        </div>
+
+        <div class="lang-col" data-col="th" lang="th">
+          <h2>คอร์สติวสอบ A1 แบบเข้มข้น มุ่งเน้นผลลัพธ์</h2>
+          <p class="intro">เตรียมความพร้อมสำหรับการสอบ A1 อย่างมั่นใจ ด้วยคอร์สติวสอบที่เน้นตรงจุด<br>เลือกรูปแบบการเรียนที่เหมาะกับคุณได้เลย!</p>
+          <div class="opts">
+            <div class="opt">
+              <h3>ตัวเลือกที่ 1: เรียนในห้องเรียน – 4 สัปดาห์</h3>
+              <ul>
+                <li>สถานที่เรียน: จังหวัดขอนแก่น</li>
+                <li>ระยะเวลา: 4 สัปดาห์</li>
+                <li class="price">ค่าเรียน: <strong>17,500 บาท</strong></li>
+              </ul>
+            </div>
+            <div class="opt">
+              <h3>ตัวเลือกที่ 2: เรียนออนไลน์ – 30 วัน</h3>
+              <ul>
+                <li>เรียนออนไลน์ได้ทุกที่ ทุกเวลาที่สะดวก</li>
+                <li>ระยะเวลา: 30 วัน</li>
+                <li class="price">ค่าเรียน: <strong>8,900 บาท</strong></li>
+              </ul>
+            </div>
+          </div>
+          <p class="closing">เลือกวิธีการเรียนที่เหมาะกับคุณ แล้วเตรียมตัวสอบ A1 อย่างตรงจุด เพื่อเพิ่มโอกาสในการสอบผ่าน!</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="hero-actions">
+      <div>
+        <p class="free">Wij bieden u gratis de eerste lessen aan om u een idee te geven van</p>
+        <div class="cta-row">
+          <a class="btn hot" href="https://dutch4thai.com/proeflessen/a1.html?utm_source=HomeDt4T&amp;utm_medium=gratisA1&amp;utm_campaign=website&amp;utm_id=clickA1">Basis Nederlands</a>
+          <span class="and">en</span>
+          <a class="btn cool" href="https://dutch4thai.com/proeflessen/a2.html?utm_source=HomeDt4T&amp;utm_medium=gratisA2&amp;utm_campaign=website&amp;utm_id=clickA2">Inburgeringsexamen A2-niveau</a>
+          <span class="and">en</span>
+          <a class="btn" href="https://dutch4thai.com/proeflessen/basisexamen-inburgering/index.html?utm_source=HomeDt4T&amp;utm_medium=gratisbasisexamen-inburgering&amp;utm_campaign=website&amp;utm_id=clickBasisLes1">Basisexamen Inburgering les 1</a>
+        </div>
+      </div>
+
+      <div>
+        <div class="login">
+          <strong>Inloggen leeromgevingen:</strong>
+          <div class="pills">
+            <a class="pill" href="https://dutch4thai.com/basisexamen-inburgering/index.html?utm_source=HomeDt4T&amp;utm_medium=basisexamen-inburgering&amp;utm_campaign=website&amp;utm_id=click4">Basisexamen Inburgering</a>
+            <a class="pill" href="https://dutch4thai.com/online-leeromgeving-a2/index.html?utm_source=HomeDt4T&amp;utm_medium=a2&amp;utm_campaign=website&amp;utm_id=click3">Leeromgeving A2</a>
+            <a class="pill" href="https://dutch4thai.com/knm/index.html?utm_source=HomeDt4T&amp;utm_medium=leeromgeving&amp;utm_campaign=website&amp;utm_id=click6">KNM</a>
+            <a class="pill" href="https://dutch4thai.com/online-grammatica/index.html?utm_source=HomeDt4T&amp;utm_medium=grammatica&amp;utm_campaign=website&amp;utm_id=click2">Grammatica</a>
+            <a class="pill" href="https://dutch4thai.com/online-leeromgeving-b1/index.html?utm_source=HomeDt4T&amp;utm_medium=leeromgevingb1&amp;utm_campaign=website&amp;utm_id=click5">Leeromgeving B1</a>
+          </div>
+        </div>
+
+        <div class="chips">
+          <span class="chip">✔️Geschikt voor zelfstudie</span>
+          <span class="chip">✔️ Slaag voor KNM: lezen, luisteren, spreken en schrijven</span>
+          <span class="chip">✔️ Studeer plaats onafhankelijk</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <svg class="wave wave-top" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path fill="#f3f1ff" d="M0 80V40C240 0 480 0 720 30s480 40 720 0v50z"/></svg>
+</section>
+
+<!-- INBURGERINGSEXAMEN -->
+<section class="sec" id="features-section">
+  <div class="wrap">
+    <h2 class="title" data-reveal>Inburgeringsexamen</h2>
+    <p class="exam-intro" data-reveal>Thaise migranten tussen de 18 en 65 jaar die in aanmerking willen komen voor een machtiging tot voorlopig verblijf (MVV) moeten volgens de Wet inburgering in het buitenland (Wib) het inburgeringsexamen afleggen op de Nederlandse ambassade in Bangkok. Dutch4Thai biedt specifieke lessen aan voor dit examen.</p>
+
+    <h4 class="sub" data-reveal>Het examen bestaat uit 3 onderdelen:</h4>
+
+    <div class="cards">
+      <article class="card tilt-card" data-reveal>
+        <div class="img"><img src="https://dutch4thai.com/images/spreekvaardigheid-klein.jpg" alt="" loading="lazy"></div>
+        <div class="body">
+          <h5>Spreekvaardigheid</h5>
+          <p>Je moet Nederlands kunnen spreken.</p>
+          <a class="more" href="https://www.naarnederland.nl/voorbeeldexamens">👉 Meer informatie</a>
+        </div>
+      </article>
+      <article class="card tilt-card" data-reveal style="--d:.12s">
+        <div class="img"><img src="https://dutch4thai.com/images/leesvaardigheid-klein.jpg" alt="" loading="lazy"></div>
+        <div class="body">
+          <h5>Leesvaardigheid</h5>
+          <p>Je moet Nederlands kunnen lezen en begrijpen.</p>
+          <a class="more" href="https://www.naarnederland.nl/voorbeeldexamens">👉 Meer informatie</a>
+        </div>
+      </article>
+      <article class="card tilt-card" data-reveal style="--d:.24s">
+        <div class="img"><img src="https://dutch4thai.com/images/kns-klein.jpg" alt="" loading="lazy"></div>
+        <div class="body">
+          <h5>Kennis van de Nederlandse Samenleving (KNS)</h5>
+          <p>Je moet de basiskennis hebben van de Nederlandse samenleving.</p>
+          <a class="more" href="https://www.naarnederland.nl/voorbeeldexamens">👉 Meer informatie</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- METHODE / MODULES -->
+<section class="sec" id="digital-marketing-section">
+  <div class="wrap">
+    <h2 class="mod-title" data-reveal>Dutch4Thai geeft lessen in de volgende modules</h2>
+    <h4 class="mod-sub" data-reveal>Basis Nederlands, Basis grammatica NT2  en Examentraining</h4>
+
+    <div class="mod-grid">
+      <div class="glass" data-reveal>
+        <h4>Online lessen</h4>
+        <p>Sinds kort biedt Dutch4Thai ook zelfstandige online lessen aan die bestaan uit 13 modules. Kandidaten hebben 12 weken toegang tot deze online leeromgeving en kunnen het programma op hun eigen tempo doorlopen. Vragen kunnen gesteld worden via de online leeromgeving.  </p>
+        <p>Indien nodig kan de toegang van 12 weken in overleg verlengd worden.</p>
+        <hr class="divider">
+        <p class="fine">Informeer vrijblijvend naar de mogelijkheden</p>
+      </div>
+      <div class="fb" data-reveal style="--d:.15s">
+        <iframe src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fdutch4thai%2Fposts%2Fpfbid02ZxQGv89m9HAbnu83j3gjpUPWEMcRs3X4DyNEwWG1V8HcAp89CsNyquGRmJ6DDKcWl&amp;show_text=false&amp;width=500" width="500" height="640" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STUDENTEN -->
+<section class="sec" id="students">
+  <div class="wrap stu-head" data-reveal>
+    <div>
+      <h2 class="title">Dit zeggen studenten over Dutch4Thai 🌷</h2>
+      <h6>Wij zijn heel blij 😀 met de reacties die wij krijgen van onze studenten</h6>
+    </div>
+    <div class="arrows">
+      <button class="arrow" id="prev" aria-label="‹">‹</button>
+      <button class="arrow" id="next" aria-label="›">›</button>
+    </div>
+  </div>
+
+  <div class="slider">
+    <div class="track" id="track">
+      <article class="slide">
+        <div class="pic"><img src="https://dutch4thai.com/images/student1.jpg" alt="" loading="lazy" draggable="false">
+          <button class="play" data-open="film1" aria-label="▶"><span>▶</span></button></div>
+        <div class="meta"><h6>533 KB - 10 sec</h6><button class="btn-film" data-open="film1">Bekijk film</button></div>
+      </article>
+      <article class="slide">
+        <div class="pic"><img src="https://dutch4thai.com/images/student2.jpg" alt="" loading="lazy" draggable="false">
+          <button class="play" data-open="film2" aria-label="▶"><span>▶</span></button></div>
+        <div class="meta"><h6>1 MB - 24 sec</h6><button class="btn-film" data-open="film2">Bekijk film</button></div>
+      </article>
+      <article class="slide">
+        <div class="pic"><img src="https://dutch4thai.com/images/student3.jpg" alt="" loading="lazy" draggable="false">
+          <button class="play" data-open="film3" aria-label="▶"><span>▶</span></button></div>
+        <div class="meta"><h6>14 MB - 54 sec</h6><button class="btn-film" data-open="film3">Bekijk film</button></div>
+      </article>
+      <article class="slide more">
+        <div class="pic"><img src="https://dutch4thai.com/images/student4.jpg" alt="" loading="lazy" draggable="false"></div>
+        <div class="meta"><h6>Meer recties op onze facebook</h6></div>
+      </article>
+    </div>
+    <div class="dots" id="dots"></div>
+  </div>
+</section>
+
+<!-- THAI -->
+<div id="thai-section">
+  <section class="banner">
+    <img src="https://dutch4thai.com/images/bg-studenten.jpg" alt="Studenten van Dutch4Thai" id="parallax">
+    <div class="wrap" data-reveal>
+      <div class="chips">
+        <span class="chip">✔️ค่าเรียน 30.000 บาท ค่าหนังสือ 3 เล่ม 3,000 บาท</span>
+        <span class="chip">✔️เรียน 8 สัปดาห์วันจันทร์ถึงวันศุกร์วันละ 3 ชั่วโมง</span>
+      </div>
+      <p>Dutch4Thai บทเรียนออนไลน์: <a href="https://dutch4thai.com/online-leeromgeving/">เข้าสู่ระบบ 🔒</a></p>
+    </div>
+  </section>
+
+  <section class="sec thai">
+    <div class="wrap" lang="th">
+      <h3 class="title" data-reveal>เรียนภาษาดัตช์ / ขอนแก่น – เมืองไทย</h3>
+      <div class="thai-grid">
+        <div class="thai-card" data-reveal>
+          <h5>การเรียนการสอนได้เรียนและฝึกทำข้อสอบ จากแนวข้อสอบจริงๆ Dutch 4 Thai ต้อง การให้ท่านสอบได้ เรามีอาจารย์สอนที่มีความรู้ และความสามารถในการสอนจริงๆ สามารถสอน และตอบคำถาม และอธิบายให้ท่านเข้าใจได้ง่าย ในการสอบข้อสอบได้อย่างเข้าใจ</h5>
+        </div>
+        <div class="thai-card" data-reveal style="--d:.12s">
+          <h5>สนใจกรุณาลงทะเบียนล่วงหน้า 4 สัปดาห์ สะดวกติดต่ออาจารย์โอม หมายเลขโทรศัพท์ 0933145714 อาจารย์พูดภาษาไทยได้ชัดเจน</h5>
+        </div>
+        <div class="thai-card reason" data-reveal>
+          <h5>เหตุผลที่ทำไห้ต้องเลือกเรียนกับ Dutch4thai</h5>
+          <h5>เราสอนโดยอาจารย์เจ้าของภาษา (ชาวดัตช์) ที่สามารถสื่อสารภาษาไทย และ ภาษาอังกฤษได้เป็นอย่างดี เราไม่ใช้อาจารย์ผู้ช่วยสอนที่เป็นชาวไทย ซึ่งจะทำให้ผู้เรียนเกิดความสับสนและเสียเวลาในการเรียน อาจารย์เอาใจใส่ผู้เรียนทุกคน เพราะสอนสด และรับจำนวนจำกัด ตารางเวลาที่ยืดหยุ่น เพราะผู้เรียนคือผู้กำหนดตารางเรียน มีหลักการสอนที่ไม่น่าเบื่อ ทำให้ผู้เรียนเรียนรู้ได้เร็วเข้าใจง่าย และสนุกกับการเรียน อาจารย์มีประสบการณ์ในการสอน สถานที่เรียนสะดวกสบาย</h5>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div data-reveal>
+      <a class="flogo" href="#header-section"><img src="https://dutch4thai.com/images/dutch4thai-logo.png" alt=""></a>
+      <p><a href="mailto:info@dutch4thai.com">info@dutch4thai.com</a></p>
+      <p>+66 (0)933145714</p>
+    </div>
+    <div data-reveal style="--d:.1s">
+      <h5>Stel direct je vraag</h5>
+      <p>Je vraag wordt zo snel mogelijk beantwoord zodra we een moment voor vinden 😃</p>
+      <a class="msg" href="https://m.me/100001022712003">💬 Open Messenger</a>
+    </div>
+    <div data-reveal style="--d:.2s">
+      <h5>Adres</h5>
+      <p lang="th">หมู่บ้านพิมานชล 2 บ้านเลขที่ 165/31 บึงแก่ นนคร อำเภอเมือง จังหวัดขอนแก่น - <a href="https://www.google.nl/maps/place/Khon+Kaen,+Mueang+Khon+Kaen+District,+Changwat+Khon+Kaen+40000,+Thailand/@16.405204,102.838066,16z/data=!4m5!3m4!1s0x3122602b91988e2f:0x93f0805cf799cc6!8m2!3d16.4321938!4d102.8236214">🌎 KhonKaen 40000</a></p>
+    </div>
+    <div class="social" data-reveal style="--d:.3s">
+      <h5>Social media</h5>
+      <p>Je kunt ons vinden via deze kanalen</p>
+      <a href="https://www.facebook.com/dutch4thai">https://www.facebook.com/dutch4thai</a>
+      <a href="https://www.instagram.com/inburgering/">https://www.instagram.com/inburgering/</a>
+    </div>
+  </div>
+  <div class="zee">
+    <div class="wrap"><p>Copyright © 2025 Dutch4Thai 🌷</p></div>
+    <img src="https://dutch4thai.com/images/zeewolden.jpg" alt="Zeewolde - Nederland" loading="lazy">
+  </div>
+</footer>
+
+<!-- Contact -->
+<button class="fab" id="fab" data-open="contact" aria-label="Contact">✉️</button>
+
+<dialog id="contact">
+  <div class="inner">
+    <h4>Contact</h4>
+    <p>indien mogelijk 6 weken voor gewenste aanvang datum aanmelden i.v.m. de voorbereiding van het materiaal.</p>
+    <p>Stuur ons een mail om je aan te melden en we nemen contact met je op.</p>
+    <p><a href="mailto:info@dutch4thai.com">info@dutch4thai.com</a></p>
+    <button class="close" data-close>Sluit venster</button>
+  </div>
+</dialog>
+
+<!-- Films -->
+<dialog id="film1"><div class="inner"><video controls playsinline preload="none" src="https://dutch4thai.com/images/film1.mp4"></video><button class="close" data-close>Sluit venster</button></div></dialog>
+<dialog id="film2"><div class="inner"><video controls playsinline preload="none" src="https://dutch4thai.com/images/film2.mp4"></video><button class="close" data-close>Sluit venster</button></div></dialog>
+<dialog id="film3"><div class="inner"><video controls playsinline preload="none" src="https://dutch4thai.com/images/film3.mp4"></video><button class="close" data-close>Sluit venster</button></div></dialog>
+
+<script>
+(function(){
+  var $=function(s,c){return (c||document).querySelector(s)};
+  var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Headline: word-by-word entrance (text blijft ongewijzigd) */
+  var h1=$('#h1');
+  if(h1&&!reduce){
+    var words=h1.textContent.trim().split(/\s+/);
+    h1.setAttribute('aria-label',h1.textContent.trim());
+    h1.innerHTML=words.map(function(w,i){return '<span class="w" aria-hidden="true"><span style="--i:'+i+'">'+w+'</span></span>'}).join(' ');
+  }
+
+  /* Scroll: progress, nav hide/show, parallax */
+  var bar=$('#bar'),nav=$('#nav'),lastY=0,par=$('#parallax'),ticking=false;
+  function onScroll(){
+    var y=window.scrollY,h=document.documentElement.scrollHeight-window.innerHeight;
+    bar.style.width=(h>0?y/h*100:0)+'%';
+    if(y>lastY&&y>200&&!nav.classList.contains('open'))nav.classList.add('hide');else nav.classList.remove('hide');
+    lastY=y;
+    if(par&&!reduce){
+      var r=par.parentElement.getBoundingClientRect();
+      if(r.bottom>0&&r.top<window.innerHeight){par.style.transform='translateY('+(r.top*-0.12)+'px)'}
+    }
+    ticking=false;
+  }
+  window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(onScroll);ticking=true}},{passive:true});
+  onScroll();
+
+  /* Mobile menu */
+  var burger=$('#burger');
+  burger.addEventListener('click',function(){
+    var o=nav.classList.toggle('open');burger.setAttribute('aria-expanded',o);burger.textContent=o?'✕':'☰';
+  });
+  $$('#menu a').forEach(function(a){a.addEventListener('click',function(){nav.classList.remove('open');burger.textContent='☰';burger.setAttribute('aria-expanded','false')})});
+
+  /* Active nav link */
+  var map={}, links=$$('#menu a');
+  links.forEach(function(a){map[a.getAttribute('href').slice(1)]=a});
+  var secObs=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){links.forEach(function(l){l.classList.remove('active')});var a=map[e.target.id];if(a)a.classList.add('active')}
+    });
+  },{rootMargin:'-45% 0px -50% 0px'});
+  Object.keys(map).forEach(function(id){var el=document.getElementById(id);if(el)secObs.observe(el)});
+
+  /* Reveal on scroll */
+  var revObs=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');revObs.unobserve(e.target)}});
+  },{threshold:.12});
+  $$('[data-reveal]').forEach(function(el){revObs.observe(el)});
+
+  /* Hero: cursor glow + 3D tilt */
+  var hero=$('.hero'),glow=$('#glow');
+  if(hero&&!reduce){
+    hero.addEventListener('pointermove',function(e){
+      var r=hero.getBoundingClientRect();
+      glow.style.setProperty('--mx',(e.clientX-r.left)+'px');
+      glow.style.setProperty('--my',(e.clientY-r.top)+'px');
+    });
+    var tilt=$('#tilt'),wrap=$('#tiltWrap');
+    wrap.addEventListener('pointermove',function(e){
+      var r=wrap.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      tilt.style.transform='rotateY('+(x*14)+'deg) rotateX('+(-y*14)+'deg)';
+    });
+    wrap.addEventListener('pointerleave',function(){tilt.style.transform=''});
+    /* card tilt */
+    $$('.tilt-card').forEach(function(c){
+      c.addEventListener('pointermove',function(e){
+        if(e.pointerType!=='mouse')return;
+        var r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+        c.style.transition='box-shadow .45s';
+        c.style.transform='perspective(900px) rotateY('+(x*8)+'deg) rotateX('+(-y*8)+'deg) translateY(-8px)';
+      });
+      c.addEventListener('pointerleave',function(){c.style.transition='';c.style.transform=''});
+    });
+  }
+
+  /* Slider */
+  var track=$('#track'),prev=$('#prev'),next=$('#next'),dotsBox=$('#dots');
+  var slides=$$('.slide',track);
+  slides.forEach(function(s,i){
+    var b=document.createElement('button');b.setAttribute('aria-label',String(i+1));
+    b.addEventListener('click',function(){goTo(i)});dotsBox.appendChild(b);
+  });
+  var dots=$$('button',dotsBox);
+  function step(){var s=slides[0];return s.getBoundingClientRect().width+24}
+  function goTo(i){
+    var s=slides[i];
+    track.scrollTo({left:s.offsetLeft-(track.clientWidth-s.clientWidth)/2,behavior:'smooth'});
+  }
+  function update(){
+    var mid=track.scrollLeft+track.clientWidth/2,best=0,bd=1e9;
+    slides.forEach(function(s,i){var d=Math.abs(s.offsetLeft+s.clientWidth/2-mid);if(d<bd){bd=d;best=i}});
+    dots.forEach(function(d,i){d.classList.toggle('on',i===best)});
+    prev.disabled=track.scrollLeft<4;
+    next.disabled=track.scrollLeft+track.clientWidth>=track.scrollWidth-4;
+  }
+  prev.addEventListener('click',function(){track.scrollBy({left:-step(),behavior:'smooth'})});
+  next.addEventListener('click',function(){track.scrollBy({left:step(),behavior:'smooth'})});
+  track.addEventListener('scroll',function(){requestAnimationFrame(update)},{passive:true});
+  window.addEventListener('resize',update);update();
+
+  /* Sleep met muis */
+  var down=false,sx=0,sl=0,moved=0;
+  track.addEventListener('pointerdown',function(e){
+    if(e.pointerType!=='mouse'||e.target.closest('button'))return;
+    down=true;moved=0;sx=e.clientX;sl=track.scrollLeft;track.classList.add('drag');
+  });
+  window.addEventListener('pointermove',function(e){
+    if(!down)return;var dx=e.clientX-sx;moved=Math.max(moved,Math.abs(dx));track.scrollLeft=sl-dx;
+  });
+  window.addEventListener('pointerup',function(){
+    if(!down)return;down=false;track.classList.remove('drag');
+    var mid=track.scrollLeft+track.clientWidth/2,best=0,bd=1e9;
+    slides.forEach(function(s,i){var d=Math.abs(s.offsetLeft+s.clientWidth/2-mid);if(d<bd){bd=d;best=i}});
+    goTo(best);
+  });
+
+  /* A1-paneel: taalwissel (mobiel) */
+  var tabs=$$('.offer-tabs .tab'),cols=$$('.lang-col');
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      var l=t.getAttribute('data-lang');
+      tabs.forEach(function(x){var on=x===t;x.classList.toggle('on',on);x.setAttribute('aria-selected',on)});
+      cols.forEach(function(c){c.classList.toggle('on',c.getAttribute('data-col')===l)});
+    });
+  });
+
+  /* Dialogs (films + contact) */
+  $$('[data-open]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var d=document.getElementById(b.getAttribute('data-open'));
+      if(!d||moved>6)return;
+      if(typeof d.showModal==='function')d.showModal();else d.setAttribute('open','');
+      var v=$('video',d);if(v){var p=v.play();if(p&&p.catch)p.catch(function(){})}
+    });
+  });
+  $$('dialog').forEach(function(d){
+    function stop(){var v=$('video',d);if(v)v.pause()}
+    d.addEventListener('close',stop);
+    d.addEventListener('click',function(e){if(e.target===d)d.close()});
+    var c=$('[data-close]',d);if(c)c.addEventListener('click',function(){stop();d.close()});
+  });
+})();
+</script>
+</body>
+</html>
