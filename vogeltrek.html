@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kraanvogeltrek Europa</title>
+<meta name="description" content="Interactieve, geanimeerde kaart van de trek van de kraanvogel (Grus grus) door Europa: gemodelleerde flyways en rustplaatsen, live GBIF/eBird-waarnemingen en NOAA-reliëf.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/deck.gl@9.1.14/dist.min.js"></script>
+<style>
+  :root {
+    --bg: #04070d;
+    --panel: rgba(9, 14, 24, 0.82);
+    --panel-solid: #0a101b;
+    --line: rgba(148, 163, 184, 0.16);
+    --line-strong: rgba(148, 163, 184, 0.3);
+    --text: #e6edf6;
+    --muted: #8b9ab0;
+    --faint: #5b6b82;
+    --west: #4fd1c5;
+    --balt: #f6ad55;
+    --oost: #f472b6;
+    --gbif: #c4f36a;
+    --site: #f8fafc;
+    --accent: #7dd3fc;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 13px; overflow: hidden; }
+  #map { position: absolute; inset: 0; }
+  .maplibregl-ctrl-attrib { background: rgba(4,7,13,.7) !important; color: var(--faint) !important; font-size: 10px; }
+  .maplibregl-ctrl-attrib a { color: var(--muted) !important; }
+  .maplibregl-ctrl-group { background: var(--panel-solid) !important; border: 1px solid var(--line); }
+  .maplibregl-ctrl-group button span { filter: invert(.85); }
+  .maplibregl-ctrl-scale { background: rgba(4,7,13,.6); color: var(--muted); border-color: var(--muted); }
+
+  .panel { position: absolute; background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: 0 10px 40px rgba(0,0,0,.45); }
+
+  /* titel / status */
+  #hud { top: 16px; left: 16px; width: 330px; padding: 16px 18px 14px; }
+  .eyebrow { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  h1 { margin: 4px 0 2px; font-size: 21px; font-weight: 650; letter-spacing: -.01em; }
+  h1 em { font-style: italic; font-weight: 400; color: var(--muted); font-size: 15px; }
+  #datum { font-size: 34px; font-weight: 300; letter-spacing: -.02em; margin-top: 10px; font-variant-numeric: tabular-nums; }
+  #fase { display: inline-block; margin-top: 2px; font-size: 11px; padding: 3px 9px; border-radius: 999px;
+    background: rgba(125, 211, 252, .1); color: var(--accent); border: 1px solid rgba(125,211,252,.25); }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .stat { padding: 8px 10px; border-radius: 10px; background: rgba(255,255,255,.03); border: 1px solid var(--line); }
+  .stat b { display: block; font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 10.5px; color: var(--muted); }
+  .flybar { display: flex; height: 4px; border-radius: 3px; overflow: hidden; margin-top: 6px; background: rgba(255,255,255,.05); }
+  .flybar i { display: block; height: 100%; transition: width .2s; }
+
+  /* lagen */
+  #lagen { top: 16px; right: 16px; width: 270px; padding: 14px 16px; max-height: calc(100% - 210px); overflow: auto; }
+  #lagen h2, #info h2 { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; font-weight: 600; }
+  .row { display: flex; align-items: center; gap: 9px; padding: 5px 0; cursor: pointer; user-select: none; }
+  .row input { accent-color: var(--accent); margin: 0; }
+  .row .sw { width: 18px; height: 3px; border-radius: 2px; flex: none; box-shadow: 0 0 8px currentColor; }
+  .row .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .row small { margin-left: auto; color: var(--faint); font-family: "JetBrains Mono", monospace; font-size: 10.5px; }
+  .sep { height: 1px; background: var(--line); margin: 10px 0; }
+  .seg { display: flex; gap: 4px; margin-top: 4px; }
+  .seg button { flex: 1; padding: 5px 6px; font: inherit; font-size: 11px; color: var(--muted); background: transparent;
+    border: 1px solid var(--line); border-radius: 7px; cursor: pointer; }
+  .seg button.on { color: var(--text); background: rgba(125,211,252,.12); border-color: rgba(125,211,252,.35); }
+  #gbifstatus { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.45; }
+  #gbifstatus.err { color: #fca5a5; }
+  details summary { cursor: pointer; color: var(--muted); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; }
+  details p, details li { color: var(--muted); font-size: 11.5px; line-height: 1.5; }
+  details ul { padding-left: 16px; margin: 6px 0; }
+  details a { color: var(--accent); text-decoration: none; }
+
+  /* infopaneel rustplaats / vogel */
+  #info { left: 16px; top: 270px; width: 300px; padding: 14px 16px; display: none; }
+  #info .close { position: absolute; right: 10px; top: 8px; background: none; border: 0; color: var(--muted); font-size: 18px; cursor: pointer; }
+  #info h3 { margin: 0 0 2px; font-size: 16px; font-weight: 600; }
+  #info .sub { color: var(--muted); font-size: 11.5px; }
+  #info p { color: #c3cfdf; font-size: 12px; line-height: 1.5; margin: 8px 0; }
+  #info .big { font-size: 24px; font-weight: 300; font-variant-numeric: tabular-nums; }
+  #info svg { width: 100%; height: 54px; display: block; margin-top: 6px; }
+
+  /* tijdlijn */
+  #tijd { left: 16px; right: 16px; bottom: 26px; padding: 12px 16px 10px; display: grid;
+    grid-template-columns: auto 1fr; gap: 6px 14px; align-items: center; }
+  #play { width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(125,211,252,.4);
+    background: rgba(125,211,252,.12); color: var(--text); cursor: pointer; display: grid; place-items: center; }
+  #play:hover { background: rgba(125,211,252,.22); }
+  .ctrls { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .speed { display: flex; gap: 2px; }
+  .speed button { font: inherit; font-size: 10px; padding: 2px 6px; border-radius: 6px; color: var(--faint);
+    background: none; border: 1px solid transparent; cursor: pointer; }
+  .speed button.on { color: var(--text); border-color: var(--line-strong); }
+  #chart { width: 100%; height: 92px; display: block; cursor: ew-resize; touch-action: none; }
+  #chart .bar { fill: rgba(196, 243, 106, .22); }
+  #chart .bar.cur { fill: rgba(196, 243, 106, .55); }
+  #chart text { fill: var(--faint); font-size: 10px; font-family: Inter, sans-serif; }
+  #chart .mlabel.cur { fill: var(--text); }
+  .legend-mini { grid-column: 2; display: flex; gap: 16px; font-size: 10.5px; color: var(--faint); flex-wrap: wrap; }
+  .legend-mini i { display: inline-block; width: 10px; height: 8px; margin-right: 5px; vertical-align: -1px; border-radius: 2px; }
+
+  #tooltip { position: absolute; pointer-events: none; z-index: 10; background: var(--panel-solid); border: 1px solid var(--line-strong);
+    border-radius: 8px; padding: 7px 9px; font-size: 11.5px; line-height: 1.45; max-width: 260px; display: none; }
+  #tooltip b { font-weight: 600; }
+  #tooltip .m { color: var(--muted); }
+
+  #loader { position: absolute; inset: 0; display: grid; place-items: center; background: var(--bg); z-index: 20; transition: opacity .6s; }
+  #loader div { color: var(--muted); letter-spacing: .14em; text-transform: uppercase; font-size: 11px; }
+
+  @media (max-width: 760px) {
+    #hud { width: auto; right: 16px; padding: 12px 14px; }
+    #datum { font-size: 24px; margin-top: 4px; }
+    h1 { font-size: 17px; }
+    .stats { display: none; }
+    #lagen { top: auto; bottom: 190px; right: 16px; left: 16px; width: auto; max-height: 34vh; display: none; }
+    #lagen.open { display: block; }
+    #togglelagen { display: block !important; }
+    #info { left: 16px; right: 16px; width: auto; top: auto; bottom: 190px; }
+    #tijd { left: 8px; right: 8px; bottom: 22px; padding: 10px; }
+    .legend-mini { display: none; }
+  }
+  #togglelagen { display: none; position: absolute; right: 16px; top: 150px; z-index: 5; }
+  .btn { font: inherit; font-size: 11px; color: var(--text); background: var(--panel); border: 1px solid var(--line-strong);
+    border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div id="loader"><div>Kraanvogels verzamelen…</div></div>
+<div id="tooltip"></div>
+
+<section id="hud" class="panel">
+  <div class="eyebrow">Europese vogeltrek</div>
+  <h1>Kraanvogel <em>Grus grus</em></h1>
+  <div id="datum">1 aug</div>
+  <span id="fase">Verzamelen</span>
+  <div class="stats">
+    <div class="stat"><b id="sLucht">0</b><span>gemodelleerde vogels in trek</span>
+      <div class="flybar"><i id="fb0" style="background:var(--west)"></i><i id="fb1" style="background:var(--balt)"></i><i id="fb2" style="background:var(--oost)"></i></div></div>
+    <div class="stat"><b id="sGbif">–</b><span>GBIF-waarnemingen deze maand (getoond)</span></div>
+  </div>
+</section>
+
+<button id="togglelagen" class="btn">Lagen</button>
+<aside id="lagen" class="panel">
+  <h2>Flyways (model)</h2>
+  <div id="flylist"></div>
+  <div class="sep"></div>
+  <h2>Lagen</h2>
+  <label class="row"><input type="checkbox" id="lTracks" checked> Trekbanen (gesimuleerd)</label>
+  <label class="row"><input type="checkbox" id="lCorr" checked> Flyway-corridors (150 km)</label>
+  <label class="row"><input type="checkbox" id="lSites" checked><span class="dot" style="background:var(--site)"></span> Rust- &amp; wintergebieden</label>
+  <label class="row"><input type="checkbox" id="lGbif" checked><span class="dot" style="background:var(--gbif)"></span> Waarnemingen (live)</label>
+  <label class="row"><input type="checkbox" id="lHex"><span class="dot" style="background:#b45cff"></span> GBIF-dichtheid (hex, alle jaren)</label>
+  <label class="row"><input type="checkbox" id="lLabels"> Plaatsnamen (CARTO)</label>
+  <div class="seg" id="bron" title="Bron van de live waarnemingen">
+    <button data-v="gbif" class="on">Alle GBIF</button><button data-v="ebird">Alleen eBird</button>
+  </div>
+  <div id="gbifstatus">GBIF laden…</div>
+  <div class="sep"></div>
+  <h2>Reliëf</h2>
+  <div class="seg" id="relief">
+    <button data-v="noaa" class="on">NOAA</button><button data-v="esri">Esri</button><button data-v="uit">Uit</button>
+  </div>
+  <div class="sep"></div>
+  <details>
+    <summary>Bronnen &amp; methode</summary>
+    <p><b>Waarnemingen</b> worden live opgehaald via de GBIF Occurrence API (Grus grus, 2024–2026, Europa/N-Afrika/M-Oosten, zonder geospatiale issues). Optie “Alleen eBird” filtert op de <i>eBird Observation Dataset</i> (Cornell Lab of Ornithology).</p>
+    <p><b>Trekbanen zijn gemodelleerd</b>: 640 virtuele vogels volgen de drie bekende flyways via de belangrijkste rustplaatsen, met verblijfsduur, vertrekdata en vliegsnelheid (350–600 km/dag) uit literatuur. Het zijn géén GPS-tracks. Bezetting per rustplaats is geschaald naar de orde van grootte van maximale tellingen.</p>
+    <p><b>GIS-verwerking</b> (GeoPandas, zie <a href="vogeltrek/build_vogeltrek.py">build_vogeltrek.py</a>): clip/vereenvoudiging Natural Earth, Chaikin-afvlakking van hartlijnen, lengte en 150 km-buffer in ETRS89-LAEA (EPSG:3035).</p>
+    <ul>
+      <li>GBIF.org (31 oktober 2026) GBIF Occurrence Search, <a href="https://www.gbif.org/species/search?q=Grus%20grus" target="_blank" rel="noopener">Grus grus</a>. Voor een formele citatie: maak een GBIF-download met DOI.</li>
+      <li>eBird Basic Dataset / eBird Observation Dataset. Cornell Lab of Ornithology, Ithaca NY. <a href="https://www.gbif.org/dataset/4fa7b334-ce0d-4e88-aaae-2e0c138d049e" target="_blank" rel="noopener">GBIF dataset</a></li>
+      <li>NOAA NCEI (2022) ETOPO 2022 15 Arc-Second Global Relief Model, <a href="https://doi.org/10.25921/fd45-gt74" target="_blank" rel="noopener">doi:10.25921/fd45-gt74</a>; weergegeven via NOAA DEM Global Mosaic hillshade service.</li>
+      <li>Natural Earth 1:50m (landen, meren, rivieren) – public domain.</li>
+      <li>Achtergrond-/labeltegels: CARTO, Esri World Hillshade (Dark).</li>
+      <li>Verdieping: <a href="https://migrationatlas.org" target="_blank" rel="noopener">EURING Eurasian-African Bird Migration Atlas</a>, <a href="https://www.movebank.org" target="_blank" rel="noopener">Movebank</a> (GPS-studies kraanvogel), Prange (2016) <i>The status of the Common Crane in Europe</i>, Vogelwelt 136; Sovon (NL-tellingen).</li>
+    </ul>
+  </details>
+</aside>
+
+<aside id="info" class="panel"><button class="close" aria-label="Sluiten">×</button><div id="infobody"></div></aside>
+
+<section id="tijd" class="panel">
+  <div class="ctrls">
+    <button id="play" aria-label="Afspelen/pauzeren"><svg id="playicon" width="16" height="16" viewBox="0 0 16 16"><path d="M4 2l10 6-10 6z" fill="currentColor"/></svg></button>
+    <div class="speed" id="speed"><button data-v="2">½×</button><button data-v="4" class="on">1×</button><button data-v="9">2×</button></div>
+  </div>
+  <svg id="chart" preserveAspectRatio="none"></svg>
+  <div class="legend-mini">
+    <span><i style="background:rgba(196,243,106,.45)"></i>GBIF-waarnemingen per maand (live, staven)</span>
+    <span><i style="background:var(--west)"></i><i style="background:var(--balt)"></i><i style="background:var(--oost)"></i>aandeel gemodelleerde vogels in trek per flyway</span>
+    <span style="margin-left:auto">spatie = afspelen/pauze · klik op een vogel om hem te volgen</span>
+  </div>
+</section>
+
+<script>
+(() => {
+  'use strict';
+  const DATA = 'vogeltrek/';
+  const MONTHS = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+  const SEASON_MONTHS = [8,9,10,11,12,1,2,3,4,5,6,7];
+  const START = Date.UTC(2026, 7, 1);
+  const DAY = 86400000;
+  const FLY_RGB = [[79,209,197],[246,173,85],[244,114,182]];
+  const GBIF_RGB = [196,243,106];
+  const EBIRD_KEY = '4fa7b334-ce0d-4e88-aaae-2e0c138d049e';
+
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => Math.round(n).toLocaleString('nl-NL');
+  const dateOf = (t) => new Date(START + t * DAY);
+  const monthOf = (t) => dateOf(t).getUTCMonth() + 1;
+  const dateLabel = (t) => { const d = dateOf(t); return d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()]; };
+  function phaseOf(t) {
+    if (t < 31) return 'Verzamelen na het broedseizoen';
+    if (t < 122) return 'Najaarstrek naar het zuiden';
+    if (t < 190) return 'Overwintering';
+    if (t < 262) return 'Voorjaarstrek naar het noorden';
+    return 'Broedseizoen';
+  }
+
+  // ---------- state ----------
+  const S = {
+    t: 30, playing: true, speed: 4, birds: [], flyways: [], occ: null, inTrek: null, inTrekFw: null,
+    sites: [], gbif: [], gbifByMonth: Array.from({length: 13}, () => []), gbifFacet: null, gbifSource: 'gbif',
+    selBird: null, selSite: null, follow: false, lastMonth: -1, gbifView: [],
+    show: { tracks: true, corr: true, sites: true, gbif: true },
+  };
+
+  window.vogeltrek = S; // debug/console-toegang
+
+  // ---------- kaart ----------
+  const NOAA = 'https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_mosaics/DEM_global_mosaic_hillshade/ImageServer/exportImage?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=jpgpng&f=image';
+  const ESRI = 'https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade_Dark/MapServer/tile/{z}/{y}/{x}';
+  const CARTO_LBL = ['a','b','c'].map(s => `https://${s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}@2x.png`);
+  const reliefPaint = { 'raster-saturation': -0.85, 'raster-brightness-max': 0.42, 'raster-contrast': 0.25, 'raster-opacity': 0.9, 'raster-fade-duration': 200 };
+
+  const map = new maplibregl.Map({
+    container: 'map',
+    style: {
+      version: 8,
+      sources: {
+        noaa: { type: 'raster', tiles: [NOAA], tileSize: 256, maxzoom: 10,
+          attribution: 'Reliëf: <a href="https://www.ncei.noaa.gov/products/etopo-global-relief-model" target="_blank">NOAA NCEI ETOPO 2022 / DEM Global Mosaic</a>' },
+        esri: { type: 'raster', tiles: [ESRI], tileSize: 256, maxzoom: 13,
+          attribution: 'Hillshade: Esri' },
+        labels: { type: 'raster', tiles: CARTO_LBL, tileSize: 256, attribution: '© <a href="https://carto.com/attributions" target="_blank">CARTO</a> © OpenStreetMap' },
+      },
+      layers: [
+        { id: 'bg', type: 'background', paint: { 'background-color': '#04070d' } },
+        { id: 'noaa', type: 'raster', source: 'noaa', paint: reliefPaint },
+        { id: 'esri', type: 'raster', source: 'esri', paint: { ...reliefPaint, 'raster-brightness-max': 0.6, 'raster-contrast': 0.1 }, layout: { visibility: 'none' } },
+      ],
+    },
+    center: [16, 47.5], zoom: 3.35, minZoom: 2, maxZoom: 9, attributionControl: false, dragRotate: false,
+  });
+  map.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: 'Data: <a href="https://www.gbif.org" target="_blank">GBIF.org</a> · eBird (Cornell Lab) · Natural Earth' }), 'bottom-right');
+  map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+  map.addControl(new maplibregl.ScaleControl({ maxWidth: 110, unit: 'metric' }), 'bottom-left');
+
+  // automatische terugval NOAA -> Esri als de ImageServer niet antwoordt
+  let noaaOk = 0, noaaErr = 0, reliefMode = 'noaa';
+  map.on('sourcedata', (e) => { if (e.sourceId === 'noaa' && e.tile && e.tile.state === 'loaded') noaaOk++; });
+  map.on('error', (e) => {
+    if (e.sourceId === 'noaa') { noaaErr++; if (noaaErr > 6 && noaaOk === 0 && reliefMode === 'noaa') setRelief('esri', true); }
+  });
+  function setRelief(v, auto) {
+    reliefMode = v;
+    map.setLayoutProperty('noaa', 'visibility', v === 'noaa' ? 'visible' : 'none');
+    map.setLayoutProperty('esri', 'visibility', v === 'esri' ? 'visible' : 'none');
+    document.querySelectorAll('#relief button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+    if (auto) $('gbifstatus').insertAdjacentHTML('afterend', '<div id="reliefnote" style="font-size:11px;color:var(--faint);margin-top:4px">NOAA-reliëf niet bereikbaar → Esri hillshade.</div>');
+  }
+
+  // ---------- deck.gl ----------
+  const overlay = new deck.MapboxOverlay({
+    interleaved: false, layers: [],
+    getTooltip: null,
+    onHover: onHover,
+    onClick: onClick,
+    getCursor: ({ isHovering }) => (isHovering ? 'pointer' : 'grab'),
+  });
+  map.addControl(overlay);
+
+  const additive = { blend: true, blendColorOperation: 'add', blendColorSrcFactor: 'src-alpha', blendColorDstFactor: 'one',
+                     blendAlphaOperation: 'add', blendAlphaSrcFactor: 'one', blendAlphaDstFactor: 'one-minus-src-alpha', depthCompare: 'always' };
+
+  // positie op tijd t (lineaire interpolatie, binair zoeken)
+  function posAt(b, t) {
+    const ts = b.t, p = b.p, n = ts.length - 1;
+    if (t <= ts[0]) return p[0];
+    if (t >= ts[n]) return p[n];
+    let lo = 0, hi = n;
+    while (hi - lo > 1) { const m = (lo + hi) >> 1; if (ts[m] <= t) lo = m; else hi = m; }
+    const u = (t - ts[lo]) / (ts[hi] - ts[lo]);
+    return [p[lo][0] + (p[hi][0] - p[lo][0]) * u, p[lo][1] + (p[hi][1] - p[lo][1]) * u];
+  }
+  function hav(a, b) {
+    const r = Math.PI / 180, dLat = (b[1] - a[1]) * r, dLon = (b[0] - a[0]) * r;
+    const h = Math.sin(dLat / 2) ** 2 + Math.cos(a[1] * r) * Math.cos(b[1] * r) * Math.sin(dLon / 2) ** 2;
+    return 12742 * Math.asin(Math.sqrt(h));
+  }
+  function kmUntil(b, t) {
+    let km = 0;
+    for (let i = 1; i < b.t.length && b.t[i] <= t; i++) km += hav(b.p[i - 1], b.p[i]);
+    return km;
+  }
+
+  const heads = [];
+  function updateHeads() {
+    const t = S.t; const cnt = [0, 0, 0];
+    for (let i = 0; i < S.birds.length; i++) {
+      const b = S.birds[i], h = heads[i];
+      const a = posAt(b, t), z = posAt(b, Math.max(0, t - 0.2));
+      h.pos = a;
+      const d = Math.hypot((a[0] - z[0]) * Math.cos(a[1] * Math.PI / 180), a[1] - z[1]);
+      h.fly = d > 0.25;
+      if (h.fly) cnt[b.f]++;
+    }
+    return cnt;
+  }
+
+  function siteCount(id) {
+    const arr = S.occ && S.occ[id]; if (!arr) return 0;
+    const i = Math.floor(S.t), f = S.t - i;
+    return arr[i] + ((arr[Math.min(365, i + 1)] || 0) - arr[i]) * f;
+  }
+
+  // eenvoudige label-declutter: grootste aantallen eerst, overlappende schermboxen vallen af
+  function declutter(list) {
+    const placed = [], out = [];
+    list.slice().sort((a, b) => (b.id === S.selSite) - (a.id === S.selSite) || siteCount(b.id) - siteCount(a.id)).forEach(d => {
+      const p = map.project(d.coord), x = p.x + 10 + Math.sqrt(siteCount(d.id)) / 16;
+      const box = [x, p.y - 13, x + d.naam.length * 6 + 4, p.y + 13];
+      if (placed.some(q => box[0] < q[2] && box[2] > q[0] && box[1] < q[3] && box[3] > q[1])) return;
+      placed.push(box); out.push(d);
+    });
+    return out;
+  }
+
+  function buildLayers() {
+    const t = S.t, L = [];
+    const pulse = (Math.sin(performance.now() / 420) + 1) / 2;
+    if (S.show.tracks) {
+      L.push(new deck.TripsLayer({
+        id: 'trips', data: S.birds,
+        getPath: d => d.p, getTimestamps: d => d.t,
+        getColor: d => FLY_RGB[d.f],
+        opacity: 0.55, widthMinPixels: 1.4, widthMaxPixels: 3, getWidth: 1600,
+        jointRounded: true, capRounded: true, fadeTrail: true, trailLength: 6, currentTime: t,
+        parameters: additive,
+      }));
+    }
+    if (S.selBird != null) {
+      const b = S.birds[S.selBird];
+      L.push(new deck.PathLayer({
+        id: 'selpath', data: [b], getPath: d => d.p, getColor: [...FLY_RGB[b.f], 70],
+        widthMinPixels: 1, getDashArray: [3, 3], parameters: { depthCompare: 'always' },
+      }));
+    }
+    if (S.show.gbif && S.gbifView.length) {
+      const m = monthOf(t);
+      L.push(new deck.ScatterplotLayer({
+        id: 'gbif', data: S.gbifView, pickable: true,
+        getPosition: d => [d.lon, d.lat],
+        getRadius: d => d.m === m ? 2.6 : 1.8, radiusUnits: 'pixels',
+        getFillColor: d => [...GBIF_RGB, d.m === m ? 190 : 45],
+        updateTriggers: { getFillColor: m, getRadius: m },
+        parameters: additive,
+      }));
+    }
+    if (S.show.sites && S.sites.length) {
+      const dyn = S.sites.filter(s => s.rol !== 'broed');
+      L.push(new deck.ScatterplotLayer({
+        id: 'site-halo', data: dyn,
+        getPosition: d => d.coord, radiusUnits: 'pixels',
+        getRadius: d => { const n = siteCount(d.id); return n > 0 ? 6 + Math.sqrt(n) / 13 + pulse * 5 : 0; },
+        getFillColor: d => d.rol === 'winter' ? [147, 197, 253, 18] : [248, 250, 252, 14],
+        getLineColor: d => d.rol === 'winter' ? [147, 197, 253, 90 - pulse * 60] : [248, 250, 252, 80 - pulse * 55],
+        stroked: true, lineWidthMinPixels: 1,
+        updateTriggers: { getRadius: [t, pulse], getLineColor: pulse },
+      }));
+      L.push(new deck.ScatterplotLayer({
+        id: 'sites', data: S.sites, pickable: true,
+        getPosition: d => d.coord, radiusUnits: 'pixels',
+        getRadius: d => d.rol === 'broed' ? 4 : 3 + Math.sqrt(siteCount(d.id)) / 16,
+        getFillColor: d => d.rol === 'broed' ? [0, 0, 0, 0] : d.rol === 'winter' ? [147, 197, 253, 150] : [248, 250, 252, 140],
+        getLineColor: d => d.rol === 'broed' ? [226, 232, 240, 110] : [255, 255, 255, 200],
+        stroked: true, lineWidthMinPixels: 1,
+        updateTriggers: { getRadius: t },
+      }));
+      L.push(new deck.TextLayer({
+        id: 'site-labels', data: declutter(dyn.filter(d => siteCount(d.id) > 0 || d.id === S.selSite)),
+        getPosition: d => d.coord,
+        getText: d => `${d.naam}\n${fmt(siteCount(d.id))}`,
+        getSize: 10.5, getColor: [226, 232, 240, 200], fontFamily: 'Inter, sans-serif', fontWeight: 500,
+        getPixelOffset: d => [10 + Math.sqrt(siteCount(d.id)) / 16, 0], getTextAnchor: 'start', getAlignmentBaseline: 'center',
+        characterSet: 'auto', outlineWidth: 3, outlineColor: [4, 7, 13, 230], fontSettings: { sdf: true },
+        lineHeight: 1.15, updateTriggers: { getText: Math.floor(t * 2), getPixelOffset: Math.floor(t) },
+        parameters: { depthCompare: 'always' },
+      }));
+    }
+    if (S.show.tracks) {
+      L.push(new deck.ScatterplotLayer({
+        id: 'heads-glow', data: heads, getPosition: d => d.pos, radiusUnits: 'pixels',
+        getRadius: d => d.fly ? 7 : 0, getFillColor: d => [...FLY_RGB[d.f], 38],
+        updateTriggers: { getPosition: t, getRadius: t }, parameters: additive,
+      }));
+      L.push(new deck.ScatterplotLayer({
+        id: 'heads', data: heads, pickable: true, getPosition: d => d.pos, radiusUnits: 'pixels',
+        getRadius: d => d.i === S.selBird ? 5 : d.fly ? 2.2 : 1.2,
+        getFillColor: d => d.i === S.selBird ? [255, 255, 255, 255] : d.fly ? [255, 255, 255, 230] : [...FLY_RGB[d.f], 120],
+        getLineColor: [...[255, 255, 255], 255], stroked: false,
+        updateTriggers: { getPosition: t, getRadius: [t, S.selBird], getFillColor: [t, S.selBird] },
+        parameters: additive,
+      }));
+    }
+    return L;
+  }
+
+  // ---------- interactie ----------
+  const tip = $('tooltip');
+  function onHover(info) {
+    if (!info.object) { tip.style.display = 'none'; return; }
+    const o = info.object; let html = '';
+    if (info.layer.id === 'gbif') {
+      html = `<b>Waarneming Grus grus</b><br><span class="m">${o.date || '–'} · ${o.country || ''}</span><br>${o.n ? fmt(o.n) + ' ex. · ' : ''}<span class="m">${o.ds || ''}</span>`;
+    } else if (info.layer.id === 'sites') {
+      html = `<b>${o.naam}</b> <span class="m">(${o.land})</span><br>${o.rol === 'broed' ? 'Broedgebied' : '≈ ' + fmt(siteCount(o.id)) + ' kraanvogels (model)'}`;
+    } else if (info.layer.id === 'heads') {
+      const b = S.birds[o.i];
+      html = `<b>Virtuele kraanvogel #${o.i + 1}</b><br><span class="m">${S.flyways[b.f].naam} · ${o.fly ? 'vliegt' : 'rust'}</span>`;
+    }
+    tip.innerHTML = html; tip.style.display = 'block';
+    tip.style.left = Math.min(info.x + 14, innerWidth - 270) + 'px'; tip.style.top = (info.y + 14) + 'px';
+  }
+  function onClick(info) {
+    if (!info.object) { return; }
+    if (info.layer.id === 'gbif') { window.open('https://www.gbif.org/occurrence/' + info.object.key, '_blank', 'noopener'); return; }
+    if (info.layer.id === 'sites') { S.selSite = info.object.id; S.selBird = null; S.follow = false; renderInfo(); return; }
+    if (info.layer.id === 'heads') { S.selBird = info.object.i; S.selSite = null; S.follow = true; renderInfo(); }
+  }
+  $('info').querySelector('.close').onclick = () => { S.selSite = null; S.selBird = null; S.follow = false; $('info').style.display = 'none'; };
+
+  function sparkline(arr, color) {
+    const W = 240, H = 50, mx = Math.max(1, ...arr);
+    let d = 'M0,' + H;
+    for (let i = 0; i < arr.length; i += 2) d += `L${(i / 365 * W).toFixed(1)},${(H - arr[i] / mx * (H - 4)).toFixed(1)}`;
+    d += `L${W},${H}Z`;
+    const x = (S.t / 365 * W).toFixed(1);
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><path d="${d}" fill="${color}" fill-opacity=".18" stroke="${color}" stroke-width="1"/>
+      <line x1="${x}" x2="${x}" y1="0" y2="${H}" stroke="#fff" stroke-opacity=".6"/></svg>`;
+  }
+  let infoTick = 0;
+  function renderInfo() {
+    const el = $('infobody');
+    if (S.selSite) {
+      const s = S.sites.find(x => x.id === S.selSite);
+      const arr = S.occ[s.id];
+      el.innerHTML = `<h3>${s.naam}</h3><div class="sub">${s.land} · ${({ rust: 'rustplaats', winter: 'overwinteringsgebied', broed: 'broedgebied' })[s.rol]}</div>
+        ${arr ? `<div class="big">${fmt(siteCount(s.id))}</div><div class="sub">gemodelleerd aanwezig op ${dateLabel(S.t)} · piek ≈ ${fmt(s.piek)}</div>${sparkline(arr, '#e2e8f0')}
+        <div class="sub" style="display:flex;justify-content:space-between"><span>aug</span><span>nov</span><span>feb</span><span>mei</span><span>jul</span></div>` : ''}
+        <p>${s.info}</p>`;
+    } else if (S.selBird != null) {
+      const b = S.birds[S.selBird], h = heads[S.selBird];
+      const col = `rgb(${FLY_RGB[b.f].join(',')})`;
+      el.innerHTML = `<h3>Virtuele kraanvogel #${S.selBird + 1}</h3><div class="sub" style="color:${col}">${S.flyways[b.f].naam}</div>
+        <div class="big">${fmt(kmUntil(b, S.t))} km</div><div class="sub">afgelegd sinds 1 aug · ${h.fly ? 'nu in de lucht' : 'rustend/foeragerend'}</div>
+        <p>Positie ${h.pos[1].toFixed(2)}°N, ${h.pos[0].toFixed(2)}°E. De kaart volgt deze vogel; versleep de kaart om te stoppen met volgen.</p>`;
+    } else { $('info').style.display = 'none'; return; }
+    $('info').style.display = 'block';
+  }
+  map.on('dragstart', () => { S.follow = false; });
+
+  // ---------- tijdlijn-grafiek ----------
+  const chart = $('chart');
+  function drawChart() {
+    const W = chart.clientWidth || 800, H = chart.clientHeight || 92, top = 6, bot = 16, ch = H - top - bot;
+    chart.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const dayX = (d) => d / 365 * W;
+    let svg = '';
+    // maandgrenzen + staven GBIF
+    const cm = monthOf(S.t);
+    let d0 = 0;
+    const facet = S.gbifFacet; const fmax = facet ? Math.max(...Object.values(facet), 1) : 1;
+    SEASON_MONTHS.forEach((m, k) => {
+      const days = new Date(Date.UTC(m >= 8 ? 2026 : 2027, m, 0)).getUTCDate();
+      const x0 = dayX(d0), x1 = dayX(d0 + days);
+      if (facet) {
+        const v = facet[m] || 0, h = v / fmax * ch;
+        svg += `<rect class="bar${m === cm ? ' cur' : ''}" x="${x0 + 2}" y="${top + ch - h}" width="${x1 - x0 - 4}" height="${h}" rx="2"><title>${MONTHS[m - 1]}: ${fmt(v)} waarnemingen (GBIF)</title></rect>`;
+      }
+      svg += `<line x1="${x0}" x2="${x0}" y1="${top}" y2="${H - bot}" stroke="rgba(148,163,184,.12)"/>`;
+      svg += `<text class="mlabel${m === cm ? ' cur' : ''}" x="${(x0 + x1) / 2}" y="${H - 3}" text-anchor="middle">${MONTHS[m - 1]}</text>`;
+      d0 += days;
+    });
+    // gestapeld aandeel in trek per flyway (model)
+    if (S.inTrekFw) {
+      const mx = Math.max(...S.inTrek, 0.01);
+      const acc = new Array(366).fill(0);
+      for (let f = 0; f < 3; f++) {
+        let up = '', down = '';
+        for (let i = 0; i < 366; i++) {
+          const y0 = top + ch - acc[i] / mx * ch * 0.92;
+          acc[i] += S.inTrekFw[f][i];
+          const y1 = top + ch - acc[i] / mx * ch * 0.92;
+          up += `${i ? 'L' : 'M'}${dayX(i).toFixed(1)},${y1.toFixed(1)}`;
+          down = `L${dayX(i).toFixed(1)},${y0.toFixed(1)}` + down;
+        }
+        const c = `rgb(${FLY_RGB[f].join(',')})`;
+        svg += `<path d="${up}${down}Z" fill="${c}" fill-opacity=".28" stroke="${c}" stroke-opacity=".7" stroke-width=".8"/>`;
+      }
+    }
+    const px = dayX(S.t);
+    svg += `<line x1="${px}" x2="${px}" y1="0" y2="${H - bot}" stroke="#fff" stroke-width="1.5"/><circle cx="${px}" cy="3" r="3" fill="#fff"/>`;
+    chart.innerHTML = svg;
+  }
+  let scrubbing = false;
+  const scrubTo = (e) => { const r = chart.getBoundingClientRect(); S.t = Math.max(0, Math.min(365, (e.clientX - r.left) / r.width * 365)); };
+  chart.addEventListener('pointerdown', (e) => { scrubbing = true; chart.setPointerCapture(e.pointerId); scrubTo(e); });
+  chart.addEventListener('pointermove', (e) => { if (scrubbing) scrubTo(e); });
+  chart.addEventListener('pointerup', () => { scrubbing = false; });
+  addEventListener('resize', drawChart);
+
+  // ---------- bediening ----------
+  const playIcon = $('playicon');
+  function setPlaying(p) {
+    S.playing = p;
+    playIcon.innerHTML = p ? '<rect x="3" y="2" width="3.5" height="12" fill="currentColor"/><rect x="9.5" y="2" width="3.5" height="12" fill="currentColor"/>' : '<path d="M4 2l10 6-10 6z" fill="currentColor"/>';
+  }
+  $('play').onclick = () => setPlaying(!S.playing);
+  addEventListener('keydown', (e) => { if (e.code === 'Space' && e.target.tagName !== 'INPUT') { e.preventDefault(); setPlaying(!S.playing); } });
+  document.querySelectorAll('#speed button').forEach(b => b.onclick = () => {
+    S.speed = +b.dataset.v; document.querySelectorAll('#speed button').forEach(x => x.classList.toggle('on', x === b));
+  });
+  document.querySelectorAll('#relief button').forEach(b => b.onclick = () => setRelief(b.dataset.v));
+  document.querySelectorAll('#bron button').forEach(b => b.onclick = () => {
+    if (S.gbifSource === b.dataset.v) return;
+    S.gbifSource = b.dataset.v; document.querySelectorAll('#bron button').forEach(x => x.classList.toggle('on', x === b));
+    loadGBIF();
+  });
+  $('togglelagen').onclick = () => $('lagen').classList.toggle('open');
+  const bind = (id, key, fn) => $(id).addEventListener('change', (e) => { if (key) S.show[key] = e.target.checked; fn && fn(e.target.checked); });
+  bind('lTracks', 'tracks'); bind('lSites', 'sites'); bind('lGbif', 'gbif');
+  bind('lCorr', 'corr', (v) => ['corr-fill', 'corr-line', 'fly-line'].forEach(l => map.getLayer(l) && map.setLayoutProperty(l, 'visibility', v ? 'visible' : 'none')));
+  bind('lLabels', null, (v) => map.setLayoutProperty('labels', 'visibility', v ? 'visible' : 'none'));
+  bind('lHex', null, (v) => toggleHex(v));
+
+  // ---------- GBIF ----------
+  const GBIF = 'https://api.gbif.org/v1/';
+  let gbifTaxonKey = null, gbifReq = 0;
+  const qs = (o) => Object.entries(o).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+  function gbifParams(extra) {
+    const p = { scientificName: 'Grus grus', hasCoordinate: true, hasGeospatialIssue: false, occurrenceStatus: 'PRESENT',
+      decimalLatitude: '4,72', decimalLongitude: '-25,60', year: '2024,2026', ...extra };
+    if (S.gbifSource === 'ebird') p.datasetKey = EBIRD_KEY;
+    return p;
+  }
+  async function getJSON(url) { const r = await fetch(url); if (!r.ok) throw new Error(r.status); return r.json(); }
+  async function loadGBIF() {
+    const req = ++gbifReq;
+    const st = $('gbifstatus'); st.classList.remove('err');
+    st.textContent = `${S.gbifSource === 'ebird' ? 'eBird' : 'GBIF'}-waarnemingen laden…`;
+    S.gbif = []; S.gbifByMonth = Array.from({ length: 13 }, () => []); S.gbifFacet = null; S.lastMonth = -1;
+    try {
+      const facet = await getJSON(GBIF + 'occurrence/search?' + qs(gbifParams({ limit: 0, facet: 'month', 'month.facetLimit': 12 })));
+      if (req !== gbifReq) return;
+      const f = {}; ((facet.facets || [])[0] || { counts: [] }).counts.forEach(c => f[+c.name] = c.count);
+      S.gbifFacet = f; S.gbifTotal = facet.count;
+      st.textContent = `${fmt(facet.count)} waarnemingen 2024–2026 gevonden; steekproef per maand laden…`;
+      const jobs = [];
+      for (let m = 1; m <= 12; m++) for (let off = 0; off < 600; off += 300) jobs.push({ m, off });
+      let done = 0;
+      const worker = async () => {
+        while (jobs.length) {
+          const { m, off } = jobs.shift();
+          if (off >= (f[m] || 0)) { done++; continue; }
+          try {
+            const r = await getJSON(GBIF + 'occurrence/search?' + qs(gbifParams({ month: m, limit: 300, offset: off })));
+            if (req !== gbifReq) return;
+            for (const o of r.results) {
+              if (o.decimalLongitude == null) continue;
+              const rec = { lon: o.decimalLongitude, lat: o.decimalLatitude, m, key: o.key, country: o.country,
+                date: (o.eventDate || '').slice(0, 10), n: o.individualCount, ds: o.datasetName || (o.datasetKey === EBIRD_KEY ? 'eBird' : '') };
+              S.gbif.push(rec); S.gbifByMonth[m].push(rec);
+            }
+          } catch (e) { /* enkele pagina mislukt: doorgaan */ }
+          done++;
+          S.lastMonth = -1;
+          st.textContent = `${fmt(S.gbifTotal)} waarnemingen gevonden · ${fmt(S.gbif.length)} op de kaart (${Math.round(done / 24 * 100)}%)`;
+        }
+      };
+      await Promise.all([worker(), worker(), worker(), worker()]);
+      if (req !== gbifReq) return;
+      st.innerHTML = `${fmt(S.gbifTotal)} waarnemingen (2024–2026) in GBIF${S.gbifSource === 'ebird' ? ' uit eBird' : ''}; steekproef van ${fmt(S.gbif.length)} punten getoond (max. 600 per maand). Klik op een punt voor het GBIF-record.`;
+    } catch (e) {
+      if (req !== gbifReq) return;
+      st.classList.add('err');
+      st.textContent = 'GBIF API niet bereikbaar (' + e.message + '). Kaart en model werken wel; waarnemingen ontbreken.';
+    }
+  }
+  async function toggleHex(on) {
+    if (on && !map.getSource('gbifhex')) {
+      try {
+        if (!gbifTaxonKey) gbifTaxonKey = (await getJSON(GBIF + 'species/match?name=Grus%20grus')).usageKey;
+        map.addSource('gbifhex', { type: 'raster', tileSize: 512,
+          tiles: [`https://api.gbif.org/v2/map/occurrence/density/{z}/{x}/{y}@2x.png?srs=EPSG:3857&taxonKey=${gbifTaxonKey}&bin=hex&hexPerTile=70&style=purpleYellow-noborder.poly`],
+          attribution: 'Dichtheid: GBIF.org' });
+        map.addLayer({ id: 'gbifhex', type: 'raster', source: 'gbifhex', paint: { 'raster-opacity': 0.55 } }, 'corr-fill');
+      } catch (e) { $('gbifstatus').textContent = 'GBIF-dichtheidskaart niet bereikbaar.'; $('lHex').checked = false; return; }
+    }
+    if (map.getLayer('gbifhex')) map.setLayoutProperty('gbifhex', 'visibility', on ? 'visible' : 'none');
+  }
+
+  // ---------- data laden ----------
+  async function loadStatic() {
+    const [tracks, bez, sites] = await Promise.all([
+      getJSON(DATA + 'tracks.json'), getJSON(DATA + 'bezetting.json'), getJSON(DATA + 'rustplaatsen.geojson'),
+    ]);
+    S.birds = tracks.birds; S.flyways = tracks.flyways;
+    S.birds.forEach((b, i) => heads.push({ i, f: b.f, pos: b.p[0], fly: false }));
+    S.occ = bez.bezetting; S.inTrek = bez.in_trek; S.inTrekFw = bez.in_trek_flyway;
+    S.sites = sites.features.map(f => ({ ...f.properties, coord: f.geometry.coordinates }));
+    $('flylist').innerHTML = S.flyways.map(f =>
+      `<div class="row" data-fw="${f.id}"><span class="sw" style="background:${f.kleur};color:${f.kleur}"></span>${f.naam}<small>${fmt(f.lengte_km)} km</small></div>`).join('');
+    document.querySelectorAll('#flylist .row').forEach(r => r.onclick = () => fetchFlyBounds(+r.dataset.fw));
+  }
+  let flyGeo = null;
+  function fetchFlyBounds(fw) {
+    if (!flyGeo) return;
+    const f = flyGeo.features.find(x => x.properties.id === fw); if (!f) return;
+    const b = new maplibregl.LngLatBounds();
+    f.geometry.coordinates.forEach(c => b.extend(c));
+    S.follow = false;
+    map.fitBounds(b, { padding: { top: 80, bottom: 220, left: 380, right: 320 }, duration: 1400, maxZoom: 5.5 });
+  }
+
+  map.on('load', async () => {
+    // GeoPandas-uitvoer als vectorlagen
+    const [landen, water, corr, fly] = await Promise.all(
+      ['landen', 'water', 'corridors', 'flyways'].map(n => getJSON(DATA + n + '.geojson')));
+    flyGeo = fly;
+    map.addSource('landen', { type: 'geojson', data: landen });
+    map.addSource('water', { type: 'geojson', data: water });
+    map.addSource('corr', { type: 'geojson', data: corr });
+    map.addSource('fly', { type: 'geojson', data: fly, lineMetrics: true });
+    map.addLayer({ id: 'land-fill', type: 'fill', source: 'landen', paint: { 'fill-color': '#0d1a2e', 'fill-opacity': 0.35 } });
+    map.addLayer({ id: 'meren', type: 'fill', source: 'water', filter: ['==', ['get', 'type'], 'meer'], paint: { 'fill-color': '#07111f', 'fill-opacity': 0.85 } });
+    map.addLayer({ id: 'rivieren', type: 'line', source: 'water', filter: ['==', ['get', 'type'], 'rivier'],
+      paint: { 'line-color': '#1f4a73', 'line-opacity': 0.45, 'line-width': ['interpolate', ['linear'], ['zoom'], 3, 0.4, 7, 1.2] } });
+    map.addLayer({ id: 'kust-glow', type: 'line', source: 'landen', paint: { 'line-color': '#2b5c8a', 'line-width': 3, 'line-blur': 3, 'line-opacity': 0.25 } });
+    map.addLayer({ id: 'grenzen', type: 'line', source: 'landen', paint: { 'line-color': '#5b7a9e', 'line-width': 0.5, 'line-opacity': 0.4 } });
+    map.addLayer({ id: 'corr-fill', type: 'fill', source: 'corr', paint: { 'fill-color': ['get', 'kleur'], 'fill-opacity': 0.045 } });
+    map.addLayer({ id: 'corr-line', type: 'line', source: 'corr', paint: { 'line-color': ['get', 'kleur'], 'line-opacity': 0.22, 'line-width': 0.8, 'line-dasharray': [2, 3] } });
+    map.addLayer({ id: 'fly-line', type: 'line', source: 'fly', layout: { 'line-cap': 'round' },
+      paint: { 'line-color': ['get', 'kleur'], 'line-opacity': 0.18, 'line-width': ['interpolate', ['linear'], ['zoom'], 3, 6, 6, 14], 'line-blur': 6 } });
+    map.addLayer({ id: 'labels', type: 'raster', source: 'labels', paint: { 'raster-opacity': 0.55 }, layout: { visibility: 'none' } });
+
+    try { await loadStatic(); }
+    catch (e) { $('loader').innerHTML = '<div>Data kon niet geladen worden (' + e.message + ')</div>'; return; }
+    $('loader').style.opacity = 0; setTimeout(() => $('loader').remove(), 700);
+    setPlaying(true);
+    loadGBIF();
+    requestAnimationFrame(frame);
+  });
+
+  // ---------- animatielus ----------
+  let last = performance.now(), chartTick = 0;
+  function frame(now) {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    if (S.playing && !scrubbing) { S.t += dt * S.speed; if (S.t > 365) S.t -= 365; }
+    const cnt = updateHeads();
+    // GBIF-subset per maand (huidige + vorige maand als vervagend spoor)
+    const m = monthOf(S.t);
+    if (m !== S.lastMonth) {
+      S.lastMonth = m; const pm = m === 1 ? 12 : m - 1;
+      S.gbifView = S.gbifByMonth[pm].concat(S.gbifByMonth[m]);
+      $('sGbif').textContent = S.gbifByMonth[m].length ? fmt(S.gbifByMonth[m].length) : '–';
+    }
+    overlay.setProps({ layers: buildLayers() });
+    $('datum').textContent = dateLabel(S.t);
+    $('fase').textContent = phaseOf(S.t);
+    const tot = cnt[0] + cnt[1] + cnt[2];
+    $('sLucht').textContent = fmt(tot);
+    const N = Math.max(1, S.birds.length);
+    for (let f = 0; f < 3; f++) $('fb' + f).style.width = (tot ? cnt[f] / tot * Math.min(1, tot / N * 4) * 100 : 0) + '%';
+    if (S.follow && S.selBird != null) map.jumpTo({ center: heads[S.selBird].pos });
+    if (++chartTick % 3 === 0) drawChart();
+    if (++infoTick % 10 === 0 && (S.selSite || S.selBird != null)) renderInfo();
+    requestAnimationFrame(frame);
+  }
+})();
+</script>
+</body>
+</html>
